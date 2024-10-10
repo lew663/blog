@@ -25,16 +25,19 @@ spring:
   profiles:
     active: dev
 
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+
+  access:
+    expiration: 3600000 # 1시간
+    header: Authorization
+
+  refresh:
+    expiration: 1209600000 # 2주
+    header: Authorization-refresh
+
 ---
 spring:
   config:
     activate:
       on-profile: dev
-
-security:
-  default:
-    enabled: true
-  oauth2:
-    resourceserver:
-      jwt:
-        issuer-uri: http://auth-server

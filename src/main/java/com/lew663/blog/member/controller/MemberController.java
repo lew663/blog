@@ -4,7 +4,6 @@ import com.lew663.blog.member.dto.SignUpDto;
 import com.lew663.blog.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

@@ -33,7 +33,13 @@ public class Member {
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  private String refreshToken;
+
   public void passwordEncode(PasswordEncoder passwordEncoder){
     this.password = passwordEncoder.encode(this.password);
+  }
+
+  public void updateRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
   }
 }
