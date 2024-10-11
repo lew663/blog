@@ -43,7 +43,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
     log.info("발급된 AccessToken 만료 기간 : {}", accessTokenExpiration);
 
-    response.sendRedirect("/index");
+    response.sendRedirect("/");
   }
 
   private String extractUsername(Authentication authentication) {

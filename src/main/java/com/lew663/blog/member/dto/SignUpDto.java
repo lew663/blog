@@ -21,14 +21,10 @@ public class SignUpDto {
   private String password;
   private String passwordCheck;
 
-  @NotBlank(message = "닉네임을 입력하세요.")
-  private String nickname;
-
   public Member toEntity() {
     return Member.builder()
         .email(this.email)
         .password(this.password)
-        .nickname(this.nickname)
         .role(Role.USER)
         .build();
   }

@@ -1,6 +1,6 @@
 package com.lew663.blog.config;
 
-import com.lew663.blog.member.service.LoginService;
+import com.lew663.blog.member.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class AuthenticationConfig {
 
-  private final LoginService loginService;
+  private final CustomUserDetailsService customUserDetailsService;
   private final PasswordEncoder passwordEncoder;
 
   @Bean
@@ -22,7 +22,7 @@ public class AuthenticationConfig {
   public AuthenticationManager authenticationManager() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setPasswordEncoder(passwordEncoder);
-    provider.setUserDetailsService(loginService);
+    provider.setUserDetailsService(customUserDetailsService);
     return new ProviderManager(provider);
   }
 }

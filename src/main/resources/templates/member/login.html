@@ -4,6 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
+  <style>
+    .social-login {
+      margin-top: 20px;
+    }
+    .social-button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .google {
+      background-color: #4285F4; /* Google color */
+    }
+    .naver {
+      background-color: #1EC800; /* Naver color */
+    }
+    .kakao {
+      background-color: #FEE500; /* Kakao color */
+      color: black; /* Kakao button text color */
+    }
+  </style>
 </head>
 <body>
 <h1>Login</h1>
@@ -16,6 +38,13 @@
 
   <button type="submit">Login</button>
 </form>
+
+<div class="social-login">
+  <h3>소셜 로그인</h3>
+  <button class="social-button google" id="googleLogin">구글 로그인</button>
+  <button class="social-button naver" id="naverLogin">네이버 로그인</button>
+  <button class="social-button kakao" id="kakaoLogin">카카오 로그인</button>
+</div>
 
 <script>
   document.getElementById('loginForm').addEventListener('submit', function (event) {
@@ -49,6 +78,19 @@
       console.error('로그인 중 오류 발생:', error);
       alert('로그인 중 오류가 발생했습니다');
     });
+  });
+
+  // 소셜 로그인 버튼 클릭 시 리디렉션
+  document.getElementById('googleLogin').addEventListener('click', function() {
+    window.location.href = '/oauth2/authorization/google'; // 구글 로그인 URI
+  });
+
+  document.getElementById('naverLogin').addEventListener('click', function() {
+    window.location.href = '/oauth2/authorization/naver'; // 네이버 로그인 URI
+  });
+
+  document.getElementById('kakaoLogin').addEventListener('click', function() {
+    window.location.href = '/oauth2/authorization/kakao'; // 카카오 로그인 URI
   });
 </script>
 </body>

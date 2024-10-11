@@ -29,9 +29,6 @@ public class MemberService {
     if(memberRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
       throw new Exception("이미 존재하는 이메일 입니다.");
     }
-    if (memberRepository.findByNickname(signUpDto.getNickname()).isPresent()) {
-      throw new Exception("이미 존재하는 닉네임입니다.");
-    }
     if(!signUpDto.getPassword().equals(signUpDto.getPasswordCheck())) {
       throw new Exception("비밀번호와 확인 비밀번호가 일치하지 않습니다.");
     }
