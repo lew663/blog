@@ -1,13 +1,14 @@
 package com.lew663.blog.member.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
   @Id

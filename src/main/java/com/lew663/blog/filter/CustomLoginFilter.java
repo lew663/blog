@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
-  private static final String DEFAULT_LOGIN_REQUEST_URL = "member/login";
+  private static final String DEFAULT_LOGIN_REQUEST_URL = "/member/login";
   private static final String HTTP_METHOD = "POST";
   private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
       new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD);

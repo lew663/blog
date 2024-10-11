@@ -1,19 +1,10 @@
 package com.lew663.blog.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lew663.blog.filter.CustomLoginFilter;
-import com.lew663.blog.handler.LoginFailureHandler;
-import com.lew663.blog.handler.LoginSuccessHandler;
 import com.lew663.blog.jwt.JwtFilter;
-import com.lew663.blog.jwt.JwtTokenProvider;
-import com.lew663.blog.member.repository.MemberRepository;
-import com.lew663.blog.member.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,12 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final LoginService loginService;
-  private final MemberRepository memberRepository;
-  private final JwtTokenProvider jwtTokenProvider;
-  private final ObjectMapper objectMapper;
-  private final LoginSuccessHandler loginSuccessHandler;
-  private final LoginFailureHandler loginFailureHandler;
+  private final JwtFilter jwtFilter;
+  private final CustomLoginFilter customLoginFilter;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,8 +38,8 @@ public class SecurityConfig {
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated()
         );
-    http.addFilterBefore(customLoginFilter(), UsernamePasswordAuthenticationFilter.class);
-    http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(customLoginFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
@@ -60,33 +47,5 @@ public class SecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-  }
-
-  @Bean
-  public AuthenticationManager authenticationManager() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setPasswordEncoder(passwordEncoder());
-    provider.setUserDetailsService(loginService);
-    return new ProviderManager(provider);
-  }
-
-  @Bean
-  public CustomLoginFilter customLoginFilter() {
-    return new CustomLoginFilter(authenticationManager(), loginSuccessHandler(), loginFailureHandler());
-  }
-
-  @Bean
-  public LoginSuccessHandler loginSuccessHandler() {
-    return new LoginSuccessHandler(jwtTokenProvider, memberRepository);
-  }
-
-  @Bean
-  public LoginFailureHandler loginFailureHandler() {
-    return new LoginFailureHandler();
-  }
-
-  @Bean
-  public JwtFilter jwtFilter() {
-    return new JwtFilter(jwtTokenProvider, memberRepository);
   }
 }
