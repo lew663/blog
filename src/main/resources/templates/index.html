@@ -6,6 +6,21 @@
 </head>
 <body>
 <h1>Welcome to the Blog</h1>
-<p>Please <a th:href="@{/member/login}">Login</a> to continue.</p>
+
+<!-- 로그인 상태에 따라 다르게 표시 -->
+<div th:if="${member != null}">
+  <!-- 로그인한 사용자 정보 -->
+  <p>로그인한 사용자: <span th:text="${member.email}">User Email</span></p>
+  <p><img th:src="${member.imageUrl}" alt="User Image" style="width: 50px; height: 50px;"></p>
+  <form th:action="@{/member/logout}" method="post">
+    <button type="submit">로그아웃</button>
+  </form>
+</div>
+
+<div th:if="${member == null}">
+  <!-- 로그인하지 않은 사용자에게는 로그인 버튼만 표시 -->
+  <p>Please <a th:href="@{/member/login}">Login</a> to continue.</p>
+</div>
+
 </body>
 </html>

@@ -1,12 +1,16 @@
 package com.lew663.blog.member.service;
 
 import com.lew663.blog.member.domain.Member;
+import com.lew663.blog.member.dto.CustomUserDetails;
 import com.lew663.blog.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,10 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다."));
 
-    return org.springframework.security.core.userdetails.User.builder()
-        .username(member.getEmail())
-        .password(member.getPassword())
-        .roles(member.getRole().name())
-        .build();
+    return new CustomUserDetails(
+        member.getEmail(), // 이메일
+        member.getPassword(), // 비밀번호
+        List.of(new SimpleGrantedAuthority(member.getRole().name())) // 권한
+    );
   }
 }

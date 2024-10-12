@@ -23,11 +23,6 @@
   </label>
   <div th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">비밀번호 확인 오류</div>
 
-  <label>
-    <input type="text" th:field="*{nickname}" placeholder="닉네임을 입력하세요" required>
-  </label>
-  <div th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">닉네임 오류</div>
-
   <div th:if="${errorMessage != null}" th:text="${errorMessage}">에러 메시지</div>
 
   <button type="submit">회원가입</button>

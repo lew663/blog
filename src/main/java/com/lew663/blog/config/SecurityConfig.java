@@ -39,8 +39,8 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/", "/index", "/login").permitAll()
-            .requestMatchers("/member/signup", "/member/login").permitAll()
+            .requestMatchers("/", "/index").permitAll()
+            .requestMatchers("/member/signup", "/member/login", "/member/logout").permitAll()
             .requestMatchers("/oauth2/authorization/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated()

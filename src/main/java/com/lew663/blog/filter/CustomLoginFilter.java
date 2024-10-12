@@ -3,7 +3,6 @@ package com.lew663.blog.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lew663.blog.handler.LoginFailureHandler;
 import com.lew663.blog.handler.LoginSuccessHandler;
-import com.lew663.blog.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,21 +40,14 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
   @Override
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException {
-    try {
-      // JSON 요청에서 사용자 정보를 읽어오기
-      Map requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
-      String email = (String) requestMap.get("email");
-      String password = (String) requestMap.get("password");
+    String email = request.getParameter("email");
+    String password = request.getParameter("password");
 
-      log.info("사용자 인증 시도: {}", email);
+    log.info("사용자 인증 시도: {}", email);
 
-      // UsernamePasswordAuthenticationToken 생성
-      UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
-      return getAuthenticationManager().authenticate(authRequest);
-    } catch (IOException e) {
-      log.error("인증 요청을 파싱하는 데 실패했습니다", e);
-      throw new RuntimeException("인증 요청을 파싱하는 데 실패했습니다");
-    }
+    // UsernamePasswordAuthenticationToken 생성
+    UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
+    return getAuthenticationManager().authenticate(authRequest);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package com.lew663.blog.jwt;
 
 import com.lew663.blog.member.domain.Member;
+import com.lew663.blog.member.dto.CustomUserDetails;
 import com.lew663.blog.member.repository.MemberRepository;
 import com.lew663.blog.util.PasswordUtil;
 import jakarta.servlet.FilterChain;
@@ -14,17 +15,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-  private static final String NO_CHECK = "/login";
+  private static final String NO_CHECK = "/member/login";
 
   private final JwtTokenProvider jwtTokenProvider;
   private final MemberRepository memberRepository;
@@ -38,8 +39,11 @@ public class JwtFilter extends OncePerRequestFilter {
       FilterChain filterChain)
       throws ServletException, IOException {
 
+    log.info("JWT 필터 실행: {}", request.getRequestURI());
+
     // 로그인 요청은 필터 통과 시킴
     if (request.getRequestURI().equals(NO_CHECK)) {
+      log.info("자체 회원가입 로그인은 필터 통과");
       filterChain.doFilter(request, response);
       return;
     }
@@ -51,10 +55,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
     // RefreshToken 값이 존재하는 경우
     if (refreshToken != null) {
+      log.info("RefreshToken 확인: {}", refreshToken);
       checkRefreshTokenReissueAccessToken(response, refreshToken);
       return;
     }
     // RefreshToken 값이 null 인 경우
+    log.info("RefreshToken : Null");
     checkAccessTokenAndAuthentication(request, response, filterChain);
   }
 
@@ -76,6 +82,7 @@ public class JwtFilter extends OncePerRequestFilter {
           jwtTokenProvider.createAccessToken(member.getEmail()),
           reissuedRefreshToken
       );
+      log.info("AccessToken과 재발급된 RefreshToken 전송");
     } else {
       log.error("유효하지 않은 리프레시 토큰입니다.");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -99,6 +106,7 @@ public class JwtFilter extends OncePerRequestFilter {
                   () -> log.error("사용자를 찾을 수 없습니다: {}", email));
         });
 
+    log.info("AccessToken 검증 성공");
     filterChain.doFilter(request, response);
   }
 
@@ -115,16 +123,17 @@ public class JwtFilter extends OncePerRequestFilter {
       password = PasswordUtil.generateRandomPassword();
     }
 
-    UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-        .username(member.getEmail())
+    CustomUserDetails customUserDetails = CustomUserDetails.builder()
+        .email(member.getEmail())
         .password(password)
-        .roles(member.getRole().name())
+        .authorities(List.of(() -> member.getRole().name()))
         .build();
 
-    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsUser, null,
-        authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
+    Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null,
+        authoritiesMapper.mapAuthorities(customUserDetails.getAuthorities()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
+    log.info("사용자 인증 정보 SecurityContext에 저장: {}", member.getEmail());
   }
 
   /**
@@ -137,6 +146,7 @@ public class JwtFilter extends OncePerRequestFilter {
       String reIssuedRefreshToken = jwtTokenProvider.createRefreshToken();
       member.updateRefreshToken(reIssuedRefreshToken);
       memberRepository.saveAndFlush(member);
+      log.info("RefreshToken이 재발급되었습니다: {}", reIssuedRefreshToken);
       return reIssuedRefreshToken;
     }
   }

@@ -1,6 +1,7 @@
 package com.lew663.blog.handler;
 
 import com.lew663.blog.jwt.JwtTokenProvider;
+import com.lew663.blog.member.dto.CustomUserDetails;
 import com.lew663.blog.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +47,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
   }
 
   private String extractUsername(Authentication authentication) {
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    return userDetails.getUsername();
+    CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+    return customUserDetails.getUsername();
   }
 }

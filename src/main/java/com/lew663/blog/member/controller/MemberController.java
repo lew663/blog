@@ -2,6 +2,7 @@ package com.lew663.blog.member.controller;
 
 import com.lew663.blog.member.dto.SignUpDto;
 import com.lew663.blog.member.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -47,5 +48,12 @@ public class MemberController {
   @GetMapping("/login")
   public String loginForm() {
     return "member/login";
+  }
+
+  @PostMapping("/logout")
+  public String logout(HttpServletResponse response) {
+    response.setHeader("Authorization", "");
+    response.setHeader("Refresh-Token", "");
+    return "redirect:/";
   }
 }
