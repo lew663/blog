@@ -1,7 +1,7 @@
 package com.lew663.blog.jwt;
 
 import com.lew663.blog.domain.member.Member;
-import com.lew663.blog.domain.member.dto.CustomUserDetails;
+import com.lew663.blog.domain.member.dto.PrincipalDetail;
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import com.lew663.blog.util.PasswordUtil;
 import jakarta.servlet.FilterChain;
@@ -123,14 +123,15 @@ public class JwtFilter extends OncePerRequestFilter {
       password = PasswordUtil.generateRandomPassword();
     }
 
-    CustomUserDetails customUserDetails = CustomUserDetails.builder()
+    // PrincipalDetail로 사용자 정보를 생성
+    PrincipalDetail principalDetail = PrincipalDetail.builder()
         .email(member.getEmail())
         .password(password)
         .authorities(List.of(() -> member.getRole().name()))
         .build();
 
-    Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null,
-        authoritiesMapper.mapAuthorities(customUserDetails.getAuthorities()));
+    Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetail, null,
+        authoritiesMapper.mapAuthorities(principalDetail.getAuthorities()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
     log.info("사용자 인증 정보 SecurityContext에 저장: {}", member.getEmail());
@@ -142,11 +143,11 @@ public class JwtFilter extends OncePerRequestFilter {
    * @param member 사용자 객체
    * @return 재발급된 RefreshToken
    */
-    private String reIssueRefreshToken (Member member){
-      String reIssuedRefreshToken = jwtTokenProvider.createRefreshToken();
-      member.updateRefreshToken(reIssuedRefreshToken);
-      memberRepository.saveAndFlush(member);
-      log.info("RefreshToken이 재발급되었습니다: {}", reIssuedRefreshToken);
-      return reIssuedRefreshToken;
-    }
+  private String reIssueRefreshToken(Member member) {
+    String reIssuedRefreshToken = jwtTokenProvider.createRefreshToken();
+    member.updateRefreshToken(reIssuedRefreshToken);
+    memberRepository.saveAndFlush(member);
+    log.info("RefreshToken이 재발급되었습니다: {}", reIssuedRefreshToken);
+    return reIssuedRefreshToken;
   }
+}

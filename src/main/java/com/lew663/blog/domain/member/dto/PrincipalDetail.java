@@ -3,19 +3,24 @@ package com.lew663.blog.domain.member.dto;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Builder
-public class CustomUserDetails implements UserDetails {
+public class PrincipalDetail implements UserDetails, OAuth2User {
+
   private final String email; // 이메일
   private final String password; // 비밀번호
   private final Collection<? extends GrantedAuthority> authorities; // 권한
+  private final Map<String, Object> attributes;
 
-  public CustomUserDetails(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+  public PrincipalDetail(String email, String password, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
     this.email = email;
     this.password = password;
     this.authorities = authorities;
+    this.attributes = attributes;
   }
 
   @Override
@@ -51,5 +56,15 @@ public class CustomUserDetails implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true; // 활성화되어 있음
+  }
+
+  @Override
+  public Map<String, Object> getAttributes() {
+    return attributes; // 소셜 로그인 정보 반환
+  }
+
+  @Override
+  public String getName() {
+    return email; // 사용자 이름으로 이메일 사용
   }
 }

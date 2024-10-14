@@ -1,10 +1,10 @@
 package com.lew663.blog.config;
 
+import com.lew663.blog.domain.member.service.PrincipalUserDetailsService;
 import com.lew663.blog.filter.CustomLoginFilter;
-import com.lew663.blog.handler.OAuth2LoginFailureHandler;
-import com.lew663.blog.handler.OAuth2LoginSuccessHandler;
+import com.lew663.blog.handler.LoginFailureHandler;
+import com.lew663.blog.handler.LoginSuccessHandler;
 import com.lew663.blog.jwt.JwtFilter;
-import com.lew663.blog.domain.member.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +25,9 @@ public class SecurityConfig {
 
   private final JwtFilter jwtFilter;
   private final CustomLoginFilter customLoginFilter;
-  private final CustomOAuth2UserService customOAuth2UserService;
-  private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-  private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+  private final PrincipalUserDetailsService principalUserDetailsService;
+  private final LoginSuccessHandler loginSuccessHandler;
+  private final LoginFailureHandler loginFailureHandler;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,8 +39,8 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/", "/index").permitAll()
-            .requestMatchers("/member/signup", "/member/login", "/member/logout").permitAll()
+            .requestMatchers("/", "/static/**").permitAll()
+            .requestMatchers("/api/member/signup").permitAll()
             .requestMatchers("/oauth2/authorization/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated()
@@ -48,9 +48,9 @@ public class SecurityConfig {
     http
         .oauth2Login(oauth2 -> oauth2
             .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/{registrationId}"))
-            .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
-            .successHandler(oAuth2LoginSuccessHandler)
-            .failureHandler(oAuth2LoginFailureHandler)
+            .userInfoEndpoint(endpoint -> endpoint.userService(principalUserDetailsService))
+            .successHandler(loginSuccessHandler)
+            .failureHandler(loginFailureHandler)
         );
 
     http.addFilterBefore(customLoginFilter, UsernamePasswordAuthenticationFilter.class);
