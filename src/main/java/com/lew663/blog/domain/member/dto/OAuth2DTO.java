@@ -1,12 +1,12 @@
-package com.lew663.blog.member.dto;
+package com.lew663.blog.domain.member.dto;
 
-import com.lew663.blog.member.domain.Member;
-import com.lew663.blog.member.domain.Provider;
-import com.lew663.blog.member.domain.Role;
-import com.lew663.blog.member.dto.oauth2Info.GoogleOAuth2Info;
-import com.lew663.blog.member.dto.oauth2Info.KakaoOAuth2Info;
-import com.lew663.blog.member.dto.oauth2Info.NaverOAuth2Info;
-import com.lew663.blog.member.dto.oauth2Info.OAuth2Info;
+import com.lew663.blog.domain.member.Role;
+import com.lew663.blog.domain.member.Member;
+import com.lew663.blog.domain.member.Provider;
+import com.lew663.blog.domain.member.oauth2.GoogleOAuth2Info;
+import com.lew663.blog.domain.member.oauth2.KakaoOAuth2Info;
+import com.lew663.blog.domain.member.oauth2.NaverOAuth2Info;
+import com.lew663.blog.domain.member.oauth2.OAuth2Info;
 import lombok.Builder;
 import lombok.Getter;
 

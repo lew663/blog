@@ -1,26 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Main Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메인 페이지</title>
+  <style>
+    .social-login {
+      margin-top: 20px;
+    }
+    .social-button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .google {
+      background-color: #4285F4; /* Google 색상 */
+    }
+    .naver {
+      background-color: #1EC800; /* Naver 색상 */
+    }
+    .kakao {
+      background-color: #FEE500; /* Kakao 색상 */
+      color: black; /* Kakao 버튼 텍스트 색상 */
+    }
+  </style>
 </head>
 <body>
-<h1>Welcome to the Blog</h1>
-
-<!-- 로그인 상태에 따라 다르게 표시 -->
-<div th:if="${member != null}">
-  <!-- 로그인한 사용자 정보 -->
-  <p>로그인한 사용자: <span th:text="${member.email}">User Email</span></p>
-  <p><img th:src="${member.imageUrl}" alt="User Image" style="width: 50px; height: 50px;"></p>
-  <form th:action="@{/member/logout}" method="post">
-    <button type="submit">로그아웃</button>
-  </form>
+<h1>블로그에 오신 것을 환영합니다!</h1>
+<div class="social-login">
+  <h3>소셜 로그인</h3>
+  <button class="social-button google" id="googleLogin">구글 로그인</button>
+  <button class="social-button naver" id="naverLogin">네이버 로그인</button>
+  <button class="social-button kakao" id="kakaoLogin">카카오 로그인</button>
 </div>
 
-<div th:if="${member == null}">
-  <!-- 로그인하지 않은 사용자에게는 로그인 버튼만 표시 -->
-  <p>Please <a th:href="@{/member/login}">Login</a> to continue.</p>
-</div>
+<script>
+  // 소셜 로그인 버튼 클릭 시 리디렉션
+  document.getElementById('googleLogin').addEventListener('click', function() {
+      window.location.href = '/oauth2/authorization/google'; // 구글 로그인 URI
+  });
 
+  document.getElementById('naverLogin').addEventListener('click', function() {
+      window.location.href = '/oauth2/authorization/naver'; // 네이버 로그인 URI
+  });
+
+  document.getElementById('kakaoLogin').addEventListener('click', function() {
+      window.location.href = '/oauth2/authorization/kakao'; // 카카오 로그인 URI
+  });
+</script>
 </body>
 </html>

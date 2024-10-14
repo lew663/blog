@@ -1,9 +1,9 @@
-package com.lew663.blog.member.service;
+package com.lew663.blog.domain.member.service;
 
-import com.lew663.blog.member.domain.Member;
-import com.lew663.blog.member.domain.Provider;
-import com.lew663.blog.member.dto.OAuth2DTO;
-import com.lew663.blog.member.repository.MemberRepository;
+import com.lew663.blog.domain.member.Member;
+import com.lew663.blog.domain.member.Provider;
+import com.lew663.blog.domain.member.dto.OAuth2DTO;
+import com.lew663.blog.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

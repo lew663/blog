@@ -1,4 +1,4 @@
-package com.lew663.blog.member.dto.oauth2Info;
+package com.lew663.blog.domain.member.oauth2;
 
 import java.util.Map;
 

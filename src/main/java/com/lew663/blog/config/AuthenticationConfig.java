@@ -1,6 +1,6 @@
 package com.lew663.blog.config;
 
-import com.lew663.blog.member.service.CustomUserDetailsService;
+import com.lew663.blog.domain.member.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

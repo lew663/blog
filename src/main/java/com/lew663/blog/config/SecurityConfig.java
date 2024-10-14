@@ -4,7 +4,7 @@ import com.lew663.blog.filter.CustomLoginFilter;
 import com.lew663.blog.handler.OAuth2LoginFailureHandler;
 import com.lew663.blog.handler.OAuth2LoginSuccessHandler;
 import com.lew663.blog.jwt.JwtFilter;
-import com.lew663.blog.member.service.CustomOAuth2UserService;
+import com.lew663.blog.domain.member.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

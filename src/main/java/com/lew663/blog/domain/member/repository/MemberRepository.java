@@ -1,7 +1,7 @@
-package com.lew663.blog.member.repository;
+package com.lew663.blog.domain.member.repository;
 
-import com.lew663.blog.member.domain.Member;
-import com.lew663.blog.member.domain.Provider;
+import com.lew663.blog.domain.member.Member;
+import com.lew663.blog.domain.member.Provider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

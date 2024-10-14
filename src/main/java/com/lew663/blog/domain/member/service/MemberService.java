@@ -1,8 +1,8 @@
-package com.lew663.blog.member.service;
+package com.lew663.blog.domain.member.service;
 
-import com.lew663.blog.member.domain.Member;
-import com.lew663.blog.member.dto.SignUpDto;
-import com.lew663.blog.member.repository.MemberRepository;
+import com.lew663.blog.domain.member.Member;
+import com.lew663.blog.domain.member.dto.SignUpDto;
+import com.lew663.blog.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

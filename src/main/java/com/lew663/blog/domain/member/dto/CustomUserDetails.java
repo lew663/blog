@@ -1,4 +1,4 @@
-package com.lew663.blog.member.dto;
+package com.lew663.blog.domain.member.dto;
 
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;

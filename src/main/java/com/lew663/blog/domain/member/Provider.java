@@ -1,4 +1,4 @@
-package com.lew663.blog.member.domain;
+package com.lew663.blog.domain.member;
 
 public enum Provider {
   NAVER,

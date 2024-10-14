@@ -1,8 +1,8 @@
 package com.lew663.blog.jwt;
 
-import com.lew663.blog.member.domain.Member;
-import com.lew663.blog.member.dto.CustomUserDetails;
-import com.lew663.blog.member.repository.MemberRepository;
+import com.lew663.blog.domain.member.Member;
+import com.lew663.blog.domain.member.dto.CustomUserDetails;
+import com.lew663.blog.domain.member.repository.MemberRepository;
 import com.lew663.blog.util.PasswordUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

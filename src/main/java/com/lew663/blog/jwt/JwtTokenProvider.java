@@ -1,6 +1,6 @@
 package com.lew663.blog.jwt;
 
-import com.lew663.blog.member.repository.MemberRepository;
+import com.lew663.blog.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
