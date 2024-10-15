@@ -45,7 +45,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
   }
 
   private String extractEmail(Authentication authentication) {
-    log.info("로그인 타입 : {}", authentication.getPrincipal().getClass());
+    log.info("로그인 타입 : {}", authentication.getPrincipal());
     if (authentication.getPrincipal() instanceof OAuth2User) {
       return (String) ((OAuth2User) authentication.getPrincipal()).getName();
     } else if (authentication.getPrincipal() instanceof PrincipalDetail) {

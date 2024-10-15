@@ -1,5 +1,6 @@
 package com.lew663.blog;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
   @GetMapping("/")
-  public String home() {
-    return "index";
+  public ResponseEntity<String> home() {
+    return ResponseEntity.ok("Home page data");
   }
 }

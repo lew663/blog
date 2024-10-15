@@ -1,4 +1,4 @@
-package com.lew663.blog.domain.Article.dto;
+package com.lew663.blog.domain.article.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleDto {
+public class ArticleForm {
   private String title;
   private String content;
-  private Long memberId;
 }

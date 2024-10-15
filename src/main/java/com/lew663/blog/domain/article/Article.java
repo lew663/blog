@@ -1,4 +1,4 @@
-package com.lew663.blog.domain.Article;
+package com.lew663.blog.domain.article;
 
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.util.BasicEntity;
