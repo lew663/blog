@@ -1,9 +1,9 @@
-package com.lew663.blog.filter;
+package com.lew663.blog.global.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lew663.blog.handler.LoginFailureHandler;
-import com.lew663.blog.handler.LoginSuccessHandler;
+import com.lew663.blog.global.handler.LoginFailureHandler;
+import com.lew663.blog.global.handler.LoginSuccessHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

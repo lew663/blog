@@ -1,7 +1,7 @@
-package com.lew663.blog.handler;
+package com.lew663.blog.global.handler;
 
 import com.lew663.blog.domain.member.dto.PrincipalDetail;
-import com.lew663.blog.jwt.JwtTokenProvider;
+import com.lew663.blog.global.jwt.JwtTokenProvider;
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

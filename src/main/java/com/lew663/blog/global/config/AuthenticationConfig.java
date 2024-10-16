@@ -1,4 +1,4 @@
-package com.lew663.blog.config;
+package com.lew663.blog.global.config;
 
 import com.lew663.blog.domain.member.service.PrincipalUserDetailsService;
 import lombok.RequiredArgsConstructor;

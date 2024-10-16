@@ -1,4 +1,4 @@
-package com.lew663.blog.jwt;
+package com.lew663.blog.global.jwt;
 
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;

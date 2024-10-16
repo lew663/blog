@@ -1,4 +1,4 @@
-package com.lew663.blog.util;
+package com.lew663.blog.global.util;
 
 import java.security.SecureRandom;
 

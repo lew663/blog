@@ -1,9 +1,9 @@
-package com.lew663.blog.jwt;
+package com.lew663.blog.global.jwt;
 
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.domain.member.dto.PrincipalDetail;
 import com.lew663.blog.domain.member.repository.MemberRepository;
-import com.lew663.blog.util.PasswordUtil;
+import com.lew663.blog.global.util.PasswordUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.lew663.blog.handler;
+package com.lew663.blog.global.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

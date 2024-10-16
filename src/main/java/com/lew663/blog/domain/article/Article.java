@@ -1,7 +1,7 @@
 package com.lew663.blog.domain.article;
 
 import com.lew663.blog.domain.member.Member;
-import com.lew663.blog.util.BasicEntity;
+import com.lew663.blog.global.util.BasicEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

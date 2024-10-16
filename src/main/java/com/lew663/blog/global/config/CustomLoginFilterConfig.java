@@ -1,8 +1,8 @@
-package com.lew663.blog.config;
+package com.lew663.blog.global.config;
 
-import com.lew663.blog.filter.CustomLoginFilter;
-import com.lew663.blog.handler.LoginFailureHandler;
-import com.lew663.blog.handler.LoginSuccessHandler;
+import com.lew663.blog.global.filter.CustomLoginFilter;
+import com.lew663.blog.global.handler.LoginFailureHandler;
+import com.lew663.blog.global.handler.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

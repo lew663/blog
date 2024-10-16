@@ -1,7 +1,7 @@
-package com.lew663.blog.config;
+package com.lew663.blog.global.config;
 
-import com.lew663.blog.jwt.JwtFilter;
-import com.lew663.blog.jwt.JwtTokenProvider;
+import com.lew663.blog.global.jwt.JwtFilter;
+import com.lew663.blog.global.jwt.JwtTokenProvider;
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
