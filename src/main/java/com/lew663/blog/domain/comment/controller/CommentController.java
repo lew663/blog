@@ -25,8 +25,9 @@ public class CommentController {
   @PostMapping("/{articleId}")
   public ResponseEntity<CommentInfo> createComment(@PathVariable Long articleId,
                                                    @Valid @RequestBody CommentForm commentForm,
+                                                   @RequestParam(required = false) Long parentId,
                                                    @AuthenticationPrincipal PrincipalDetail principalDetail) {
-    CommentInfo commentInfo = commentService.createComment(articleId, principalDetail.getName(), commentForm);
+    CommentInfo commentInfo = commentService.createComment(articleId, principalDetail.getName(), commentForm, parentId);
     return new ResponseEntity<>(commentInfo, HttpStatus.CREATED);
   }
 

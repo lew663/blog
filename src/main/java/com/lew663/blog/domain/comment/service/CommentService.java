@@ -24,12 +24,23 @@ public class CommentService {
   private final MemberRepository memberRepository;
 
   @Transactional
-  public CommentInfo createComment(Long articleId, String email, CommentForm commentForm) {
+  public CommentInfo createComment(Long articleId, String email, CommentForm commentForm, Long parentId) {
     Article article = articleRepository.findById(articleId)
         .orElseThrow(() -> new RuntimeException("Article not found"));
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
-    Comment comment = new Comment(article, member, commentForm.getContent());
+
+    Comment comment;
+
+    if (parentId != null) {
+      Comment parentComment = commentRepository.findById(parentId)
+          .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+      comment = new Comment(article, member, commentForm.getContent(), parentComment);
+      parentComment.getChild().add(comment);
+    } else {
+      comment = new Comment(article, member, commentForm.getContent());
+    }
+
     commentRepository.save(comment);
     return CommentInfo.from(comment);
   }
@@ -56,8 +67,10 @@ public class CommentService {
 
   public List<CommentInfo> getCommentsByArticleId(Long articleId) {
     List<Comment> comments = commentRepository.findByArticleId(articleId);
+
     return comments.stream()
-        .map(CommentInfo::from)
+        .filter(comment -> comment.getParent() == null)
+        .map(CommentInfo::from) // 기존의 from 메서드를 사용
         .collect(Collectors.toList());
   }
 }

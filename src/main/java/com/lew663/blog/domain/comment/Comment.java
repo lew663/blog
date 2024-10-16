@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Entity
@@ -26,10 +29,22 @@ public class Comment {
 
   private String content;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id")
+  private Comment parent;
+
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  private List<Comment> child = new ArrayList<>();
+
   public Comment(Article article, Member member, String content) {
     this.article = article;
     this.member = member;
     this.content = content;
+  }
+
+  public Comment(Article article, Member member, String content, Comment parent) {
+    this(article, member, content);
+    this.parent = parent;
   }
 
   public void updateContent(String content) {
