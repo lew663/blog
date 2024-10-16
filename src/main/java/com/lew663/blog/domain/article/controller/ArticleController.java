@@ -22,10 +22,10 @@ public class ArticleController {
 
   // 게시글 생성
   @PostMapping
-  public ResponseEntity<Article> createArticle(@RequestBody ArticleForm articleForm,
+  public ResponseEntity<ArticleInfo> createArticle(@RequestBody ArticleForm articleForm,
                                                @AuthenticationPrincipal PrincipalDetail principalDetail) {
-    Article createdArticle = articleService.createArticle(articleForm, principalDetail.getName());
-    return new ResponseEntity<>(createdArticle, HttpStatus.CREATED);
+    ArticleInfo articleInfo = articleService.createArticle(articleForm, principalDetail.getName());
+    return new ResponseEntity<>(articleInfo, HttpStatus.CREATED);
   }
 
   // 게시글 수정

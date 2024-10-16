@@ -21,12 +21,13 @@ public class ArticleService {
   private final MemberRepository memberRepository;
 
   @Transactional
-  public Article createArticle(ArticleForm articleForm, String email) {
+  public ArticleInfo createArticle(ArticleForm articleForm, String email) {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
     Article article = new Article(articleForm.getTitle(), articleForm.getContent(), member);
-    return articleRepository.save(article);
+    articleRepository.save(article);
+    return ArticleInfo.from(article);
   }
 
   @Transactional
