@@ -2,6 +2,7 @@ package com.lew663.blog.domain.article.service;
 
 import com.lew663.blog.domain.article.Article;
 import com.lew663.blog.domain.article.dto.ArticleForm;
+import com.lew663.blog.domain.article.dto.ArticleInfo;
 import com.lew663.blog.domain.article.repository.ArticleRepository;
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.domain.member.repository.MemberRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class ArticleService {
   private final ArticleRepository articleRepository;
   private final MemberRepository memberRepository;
 
-  // 게시글 생성
+  @Transactional
   public Article createArticle(ArticleForm articleForm, String email) {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
@@ -27,43 +29,38 @@ public class ArticleService {
     return articleRepository.save(article);
   }
 
-  // 게시글 수정
   @Transactional
   public void updateArticle(Long id, ArticleForm articleForm, String email) {
     Article article = articleRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Article not found"));
-    if (article.getMember() == null) {
-      throw new RuntimeException("작성자가 존재하지 않습니다.");
-    }
     if (!article.getMember().getEmail().equals(email)) {
       throw new RuntimeException("수정 권한이 없습니다.");
     }
     article.edit(articleForm.getContent(), articleForm.getTitle());
   }
 
-  // 게시글 삭제
   @Transactional
   public void deleteArticle(Long id, String email) {
     Article article = articleRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Article not found"));
 
-    // 작성자만 삭제 가능
     if (!article.getMember().getEmail().equals(email)) {
       throw new RuntimeException("삭제 권한이 없습니다.");
     }
     articleRepository.delete(article);
   }
 
-  // 게시글 조회 (특정 게시물)
-  public Article getArticleById(Long id) {
+  @Transactional
+  public ArticleInfo getArticleById(Long id) {
     Article article = articleRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Article not found"));
     article.addHit();
-    return article;
+    return ArticleInfo.from(article);
   }
 
-  // 게시글 조회 (전체 게시글)
-  public List<Article> getAllArticles() {
-    return articleRepository.findAll();
+  public List<ArticleInfo> getAllArticles() {
+    return articleRepository.findAll().stream()
+        .map(ArticleInfo::from)
+        .collect(Collectors.toList());
   }
 }
