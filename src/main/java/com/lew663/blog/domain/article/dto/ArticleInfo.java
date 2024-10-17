@@ -14,7 +14,7 @@ public class ArticleInfo {
   private String title;
   private String content;
   private String email;
-  private Long hits;
+  private long viewCount;
   private List<String> tags;
 
   public static ArticleInfo from(Article article) {
@@ -27,7 +27,7 @@ public class ArticleInfo {
         article.getTitle(),
         article.getContent(),
         article.getMember().getEmail(),
-        article.getHit(),
+        article.getViewCount() != null ? article.getViewCount().getViewCount() : 0,
         tagNames
     );
   }

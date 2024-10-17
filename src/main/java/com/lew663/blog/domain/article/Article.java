@@ -29,8 +29,8 @@ public class Article extends BasicEntity {
   @Column(columnDefinition = "TEXT")
   private String content;
 
-  @Column(nullable = false, columnDefinition = "bigint default 0")
-  private long hit = 0;
+  @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
+  private ArticleViewCount viewCount;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", nullable = false)
@@ -56,7 +56,10 @@ public class Article extends BasicEntity {
   }
 
   public void addHit(){
-    this.hit++;
+    if (viewCount == null) {
+      viewCount = new ArticleViewCount(this);
+    }
+    viewCount.incrementViewCount();
   }
 
   public void addTag(Tags tag) {
