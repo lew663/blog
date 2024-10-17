@@ -1,6 +1,6 @@
 package com.lew663.blog.domain.article.controller;
 
-import com.lew663.blog.domain.article.Article;
+import com.lew663.blog.domain.article.Tags;
 import com.lew663.blog.domain.article.dto.ArticleForm;
 import com.lew663.blog.domain.article.dto.ArticleInfo;
 import com.lew663.blog.domain.article.service.ArticleService;
@@ -57,4 +57,5 @@ public class ArticleController {
     List<ArticleInfo> articles = articleService.getAllArticles();
     return new ResponseEntity<>(articles, HttpStatus.OK);
   }
+
 }

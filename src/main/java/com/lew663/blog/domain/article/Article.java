@@ -1,11 +1,17 @@
 package com.lew663.blog.domain.article;
 
+import com.lew663.blog.domain.comment.Comment;
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.global.util.BasicEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +36,13 @@ public class Article extends BasicEntity {
   @JoinColumn(name = "member_id", nullable = false)
   private Member member;
 
+  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+  private List<ArticleTagList> articleTagLists = new ArrayList<>();
+
+  @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private List<Comment> parentCommentList = new ArrayList<>();
+
   @Builder
   public Article(String title, String content, Member member) {
     this.title = title;
@@ -44,5 +57,11 @@ public class Article extends BasicEntity {
 
   public void addHit(){
     this.hit++;
+  }
+
+  public void addTag(Tags tag) {
+    ArticleTagList articleTagList = new ArticleTagList(this, tag);
+    articleTagLists.add(articleTagList);
+    tag.getArticleTagLists().add(articleTagList);
   }
 }

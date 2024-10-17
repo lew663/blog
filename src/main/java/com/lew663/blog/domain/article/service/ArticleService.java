@@ -1,6 +1,7 @@
 package com.lew663.blog.domain.article.service;
 
 import com.lew663.blog.domain.article.Article;
+import com.lew663.blog.domain.article.Tags;
 import com.lew663.blog.domain.article.dto.ArticleForm;
 import com.lew663.blog.domain.article.dto.ArticleInfo;
 import com.lew663.blog.domain.article.repository.ArticleRepository;
@@ -26,6 +27,13 @@ public class ArticleService {
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
     Article article = new Article(articleForm.getTitle(), articleForm.getContent(), member);
+
+    if (articleForm.getTags() != null) {
+      for (String tagName : articleForm.getTags()) {
+        Tags tag = new Tags(tagName);
+        article.addTag(tag);
+      }
+    }
     articleRepository.save(article);
     return ArticleInfo.from(article);
   }
@@ -64,4 +72,12 @@ public class ArticleService {
         .map(ArticleInfo::from)
         .collect(Collectors.toList());
   }
+
+  @Transactional
+  public void addTagToArticle(Long articleId, Tags tag) {
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(() -> new RuntimeException("Article not found"));
+    article.addTag(tag);
+  }
+
 }
