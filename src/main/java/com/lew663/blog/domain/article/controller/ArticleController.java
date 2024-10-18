@@ -1,6 +1,5 @@
 package com.lew663.blog.domain.article.controller;
 
-import com.lew663.blog.domain.article.Tags;
 import com.lew663.blog.domain.article.dto.ArticleForm;
 import com.lew663.blog.domain.article.dto.ArticleInfo;
 import com.lew663.blog.domain.article.service.ArticleService;

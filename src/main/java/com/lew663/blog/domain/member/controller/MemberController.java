@@ -4,18 +4,24 @@ import com.lew663.blog.domain.member.dto.SignUpForm;
 import com.lew663.blog.domain.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/member")
 public class MemberController {
 
   private final MemberService memberService;
 
+  @GetMapping("/signup")
+  public String singUpForm() {
+    return "member/signup";
+  }
+
   @PostMapping("/signup")
-  public String signup(@Valid @RequestBody SignUpForm signUpForm) throws Exception {
+  public String signup(@Valid @ModelAttribute SignUpForm signUpForm) throws Exception {
     memberService.signup(signUpForm);
-    return "회원 가입 성공!";
+    return "redirect:/login";
   }
 }

@@ -40,9 +40,8 @@ public class SecurityConfig {
 
         .authorizeHttpRequests(request -> request
             .requestMatchers("/", "/static/**").permitAll()
-            .requestMatchers("/api/member/signup").permitAll()
-            .requestMatchers("/api/article/**").permitAll()
-            .requestMatchers("/api/comments/article/**").permitAll()
+            .requestMatchers("/member/login", "/login").permitAll()
+            .requestMatchers("/member/signup").permitAll()
             .requestMatchers("/oauth2/authorization/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated()
@@ -53,6 +52,11 @@ public class SecurityConfig {
             .userInfoEndpoint(endpoint -> endpoint.userService(principalUserDetailsService))
             .successHandler(loginSuccessHandler)
             .failureHandler(loginFailureHandler)
+        )
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint((request, response, authException) -> {
+              response.sendRedirect("/login");
+            })
         );
 
     http.addFilterBefore(customLoginFilter, UsernamePasswordAuthenticationFilter.class);

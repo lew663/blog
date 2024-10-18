@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:fragment="head">
+  <meta charset="UTF-8"> <!-- 문자 인코딩 설정 -->
+  <meta name="jwt-token" content="${session.jwtToken}" />
+  <meta name="refresh-token" content="${session.refreshToken}" />
+  <title>블로그</title>
+  <!-- CSS, JS 파일 링크 추가 가능 -->
+</head>
+
+<body>
+
+<header class="fixed-top d-xxl-none p-0">
+  <nav class="navbar navbar-light bg-light">
+    <div class="container-fluid p-0">
+      <button class="navbar-toggle btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div id="nav-brand" class="nav-brand">
+        <a th:href="@{/}">lew BLOG</a>
+      </div>
+      <div id="nav-login" sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}"><span class="pe-2">로그인</span></a>
+      </div>
+      <div sec:authorize="isAuthenticated()" class="pe-2">
+        <span sec:authorize="hasRole('USER')" th:text="${#authentication.name} + '님'"></span>
+        <a th:href="@{/article/write}" sec:authorize="hasRole('ADMIN')">
+          <span style="font-size: 21px"><i class="fas fa-edit"></i></span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <aside class="offcanvas offcanvas-start" data-bs-scroll="true" style="max-width: 300px;" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasLabel">
+    <div class="offcanvas-header bg-light">
+      <button class="btn btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body bg-light">
+      <div th:replace="layout/sideBar.html :: sideBar"></div>
+    </div>
+  </aside>
+</header>
+
+<section class="row g-0 row-cols-xxl-2 g-xxl-0 p-0">
+  <div class="col-xxl-10 p-0 sections-container">
+    <button id="arrow" class="arrow-up">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div th:replace="${content}"></div>
+
+    <script th:src="@{/js/arrow.js}"></script>
+    <script>
+      // 페이지가 로드될 때 JWT와 리프레시 토큰을 localStorage에 저장
+      document.addEventListener('DOMContentLoaded', function() {
+        const jwtToken = document.querySelector('meta[name="jwt-token"]').content;
+        const refreshToken = document.querySelector('meta[name="refresh-token"]').content;
+
+        // 토큰이 존재하는 경우에만 저장
+        if (jwtToken) {
+          localStorage.setItem('jwtToken', jwtToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+      });
+    </script>
+
+    <footer class="footer bg-light mt-5">
+      <div class="container text-center p-2">
+        <h5><span class="text-muted">Copyright ©lew663</span></h5>
+      </div>
+    </footer>
+  </div>
+</section>
+
+</body>
+</html>
+

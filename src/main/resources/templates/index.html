@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html th:fragment="layout (head, content)" lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"> <!-- layout 파일에서 head 부분을 가져옴 -->
+  <title>메인 페이지</title>
+</head>
+<body>
+
+<header>
+  <h1>환영합니다!</h1>
+  <nav>
+    <a th:href="@{/login}">로그인</a>
+    <a th:href="@{/member/signup}">회원가입</a>
+    <a th:href="@{/article/create}">게시글 작성</a>
+    <a th:href="@{/article/view}">게시글 조회</a>
+  </nav>
+</header>
+
+<main>
+  <h2>최근 게시글</h2>
+  <!-- 최근 게시글 목록이 들어갈 부분 -->
+</main>
+
+<footer>
+  <div>
+    <h5><span class="text-muted">Copyright ©lew663</span></h5>
+  </div>
+</footer>
+
+</body>
+</html>
