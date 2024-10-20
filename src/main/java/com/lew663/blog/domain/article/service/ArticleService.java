@@ -5,6 +5,8 @@ import com.lew663.blog.domain.article.Tags;
 import com.lew663.blog.domain.article.dto.ArticleForm;
 import com.lew663.blog.domain.article.dto.ArticleInfo;
 import com.lew663.blog.domain.article.repository.ArticleRepository;
+import com.lew663.blog.domain.category.Category;
+import com.lew663.blog.domain.category.repository.CategoryRepository;
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -20,13 +22,17 @@ public class ArticleService {
 
   private final ArticleRepository articleRepository;
   private final MemberRepository memberRepository;
+  private final CategoryRepository categoryRepository;
 
   @Transactional
   public ArticleInfo createArticle(ArticleForm articleForm, String email) {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    Article article = new Article(articleForm.getTitle(), articleForm.getContent(), member);
+    Category category = categoryRepository.findById(articleForm.getCategoryId())
+        .orElseThrow(() -> new RuntimeException("Category not found"));
+
+    Article article = new Article(articleForm.getTitle(), articleForm.getContent(), member, category);
 
     if (articleForm.getTags() != null) {
       for (String tagName : articleForm.getTags()) {
@@ -45,7 +51,10 @@ public class ArticleService {
     if (!article.getMember().getEmail().equals(email)) {
       throw new RuntimeException("수정 권한이 없습니다.");
     }
-    article.edit(articleForm.getContent(), articleForm.getTitle());
+    Category category = categoryRepository.findById(articleForm.getCategoryId())
+        .orElseThrow(() -> new RuntimeException("Category not found"));
+
+    article.edit(articleForm.getContent(), articleForm.getTitle(), category);
   }
 
   @Transactional

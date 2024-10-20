@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -37,17 +38,11 @@ public class JwtTokenProvider {
   @Value("${jwt.refresh.expiration}")
   private Long refreshTokenExpirationPeriod;
 
-  @Value("${jwt.access.header}")
-  private String accessHeader;
-
-  @Value("${jwt.refresh.header}")
-  private String refreshHeader;
-
   private SecretKey key;
 
-  private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-  private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
   private static final String EMAIL_CLAIM = "email";
+  private static final String ACCESS_TOKEN_COOKIE = "accessToken";
+  private static final String REFRESH_TOKEN_COOKIE = "refreshToken";
   private static final String BEARER = "Bearer ";
 
   private final MemberRepository memberRepository;
@@ -64,10 +59,9 @@ public class JwtTokenProvider {
    * AccessToken 생성 메소드
    */
   public String createAccessToken(String email) {
-    Date now = new Date();
     return Jwts.builder()
-        .subject(ACCESS_TOKEN_SUBJECT)
-        .expiration(new Date(now.getTime() + accessTokenExpirationPeriod))
+        .subject("AccessToken")
+        .expiration(new Date(System.currentTimeMillis() + accessTokenExpirationPeriod))
         .claim(EMAIL_CLAIM, email)
         .signWith(key)
         .compact();
@@ -77,90 +71,48 @@ public class JwtTokenProvider {
    * RefreshToken 생성
    */
   public String createRefreshToken() {
-    Date now = new Date();
     return Jwts.builder()
-        .subject(REFRESH_TOKEN_SUBJECT)
-        .expiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
+        .subject("RefreshToken")
+        .expiration(new Date(System.currentTimeMillis() + refreshTokenExpirationPeriod))
         .signWith(key)
         .compact();
   }
 
   /**
-   * AccessToken 헤더에 실어서 보내기
-   */
-  public void sendAccessToken(HttpServletResponse response, String accessToken) {
-    response.setStatus(HttpServletResponse.SC_OK);
-    response.setHeader(accessHeader, accessToken);
-    log.info("재발급된 Access Token : {}", accessToken);
-  }
-
-  /**
-   * AccessToken + RefreshToken 헤더에 실어서 보내기
+   * AccessToken + RefreshToken 을 쿠키에 저장하여 클라이언트에게 전송
    */
   public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
-    response.setStatus(HttpServletResponse.SC_OK);
-    setAccessTokenHeader(response, accessToken);
-    setRefreshTokenHeader(response, refreshToken);
-    log.info("Access Token, Refresh Token 헤더 설정 완료");
+    addCookie(response, ACCESS_TOKEN_COOKIE, accessToken, accessTokenExpirationPeriod);
+    addCookie(response, REFRESH_TOKEN_COOKIE, refreshToken, refreshTokenExpirationPeriod);
+    log.info("AccessToken 및 RefreshToken 쿠키에 저장 완료");
   }
 
   /**
-   * 헤더에서 RefreshToken 추출
+   * 쿠키 생성 메소드
    */
-  public Optional<String> extractRefreshToken(HttpServletRequest request) {
-    return Optional.ofNullable(request.getHeader(refreshHeader))
-        .filter(refreshToken -> refreshToken.startsWith(BEARER))
-        .map(refreshToken -> refreshToken.replace(BEARER, ""));
-  }
-
-  /**
-   * 헤더에서 AccessToken 추출
-   */
-  public Optional<String> extractAccessToken(HttpServletRequest request) {
-    return Optional.ofNullable(request.getHeader(accessHeader))
-        .filter(accessToken -> accessToken.startsWith(BEARER))
-        .map(accessToken -> accessToken.replace(BEARER, ""));
+  private void addCookie(HttpServletResponse response, String name, String value, Long maxAge) {
+    Cookie cookie = new Cookie(name, value);
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+    cookie.setPath("/");
+    cookie.setMaxAge(Math.toIntExact(maxAge / 1000));
+    response.addCookie(cookie);
   }
 
   /**
    * AccessToken 에서 Email 추출
    */
-  public Optional<String> extractEmail(String accessToken) {
+  public Optional<String> extractEmail(String token) {
     try {
       Jws<Claims> claimsJws = Jwts.parser()
           .verifyWith(key)
           .build()
-          .parseSignedClaims(accessToken);
+          .parseSignedClaims(token);
       return Optional.ofNullable(claimsJws.getPayload().get(EMAIL_CLAIM, String.class));
     } catch (Exception e) {
       log.error("액세스 토큰이 유효하지 않습니다.");
       return Optional.empty();
     }
-  }
-
-  /**
-   * AccessToken 헤더 설정
-   */
-  public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-    response.setHeader(accessHeader, accessToken);
-  }
-
-  /**
-   * RefreshToken 헤더 설정
-   */
-  public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-    response.setHeader(refreshHeader, refreshToken);
-  }
-
-  /**
-   * RefreshToken DB 저장(업데이트)
-   */
-  public void updateRefreshToken(String email, String refreshToken) {
-    memberRepository.findByEmail(email)
-        .ifPresentOrElse(
-            member -> member.updateRefreshToken(refreshToken),
-            () -> new RuntimeException("일치하는 회원이 없습니다.")
-        );
   }
 
   /**

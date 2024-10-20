@@ -1,5 +1,6 @@
 package com.lew663.blog.domain.article;
 
+import com.lew663.blog.domain.category.Category;
 import com.lew663.blog.domain.comment.Comment;
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.global.util.BasicEntity;
@@ -43,16 +44,22 @@ public class Article extends BasicEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Comment> parentCommentList = new ArrayList<>();
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id", nullable = false)
+  private Category category;
+
   @Builder
-  public Article(String title, String content, Member member) {
+  public Article(String title, String content, Member member, Category category) {
     this.title = title;
     this.content = content;
     this.member = member;
+    this.category = category;
   }
 
-  public void edit(String content, String title) {
+  public void edit(String content, String title, Category category) {
     this.content = content;
     this.title = title;
+    this.category = category;
   }
 
   public void addHit(){

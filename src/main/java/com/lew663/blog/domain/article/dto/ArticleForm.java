@@ -15,4 +15,5 @@ public class ArticleForm {
   private String title;
   private String content;
   private List<String> tags;
+  private Long categoryId;
 }

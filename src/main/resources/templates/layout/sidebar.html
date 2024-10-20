@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<body>
+<div th:fragment="sideBar" class="m-4">
+  <div class="sidebar-header" style="white-space: nowrap">
+    <a th:href="@{/}">
+      <h3 class="text-black-50">lew LOG</h3>
+    </a>
+    <a sec:authorize="hasRole('USER')" th:href="@{/article/write}">
+      <h5 class="text-black-50">NEW ARTICLE</h5>
+    </a>
+  </div>
+
+    <!-- 카테고리 섹션 -->
+    <li class="border-top my-3"></li>
+    <li class="mb-1">
+      <button class="btn btn-toggle align-items-center rounded collapsed fs-5" data-bs-toggle="collapse"
+              data-bs-target="#category-collapse" aria-expanded="false">카테고리
+      </button>
+      <div class="collapse" id="category-collapse">
+        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+          <!-- 상위 카테고리 루프 -->
+          <li th:each="superCategory : ${categories}">
+            <div class="btn-group">
+              <!-- 상위 카테고리 클릭 시 하위 카테고리 표시 -->
+              <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                      th:data-bs-target="|#collapse-${superCategory.getId()}-sub|"
+                      aria-expanded="false">
+              </button>
+              <a th:href="@{/article/list(category=${superCategory.getTitle()},tier=1,page=1)}"
+                 class="ms-0 superCategory btn fs-5"
+                 th:text="|${superCategory.getTitle()} (${superCategory.getCount()})|">카테고리</a>
+            </div>
+            <!-- 하위 카테고리 -->
+            <div class="collapse" th:id="|collapse-${superCategory.getId()}-sub|">
+              <ul class="ms-1 btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                  th:each="subCategory : ${superCategory.getChild()}">
+                <li>
+                  <a th:href="@{/article/list(category=${subCategory.getTitle()},tier=2,page=1)}"
+                     class="link-dark rounded"
+                     th:text="|${subCategory.getTitle()} (${subCategory.getCount()})|">하위 카테고리</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- 로그인, 로그아웃, 사용자 정보 -->
+    <li class="border-top my-3"></li>
+    <li class="mb-1">
+      <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+        <li sec:authorize="!isAuthenticated()">
+          <a th:href="@{/login}" class="link-dark rounded">
+            <i class="fas fa-sign-in-alt"></i>&nbsp;로그인
+          </a>
+        </li>
+        <li sec:authorize="isAuthenticated()">
+          <form method="post" th:action="@{/logout}" style="display:inline;">
+            <button type="submit" class="btn link-dark rounded ms-1 small">
+              <i class="fas fa-sign-out-alt"></i>&nbsp;로그아웃
+            </button>
+          </form>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

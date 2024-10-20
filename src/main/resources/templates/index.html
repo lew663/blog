@@ -1,30 +1,28 @@
 <!DOCTYPE html>
-<html th:fragment="layout (head, content)" lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout/layout :: head"> <!-- layout 파일에서 head 부분을 가져옴 -->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head th:replace="~{layout/head :: head}">
   <title>메인 페이지</title>
+  <link rel="stylesheet" th:href="@{/css/index.css}">
 </head>
+
 <body>
 
-<header>
-  <h1>환영합니다!</h1>
-  <nav>
-    <a th:href="@{/login}">로그인</a>
-    <a th:href="@{/member/signup}">회원가입</a>
-    <a th:href="@{/article/create}">게시글 작성</a>
-    <a th:href="@{/article/view}">게시글 조회</a>
-  </nav>
-</header>
+<div class="layout-container">
+  <!-- 사이드바 -->
+  <header th:replace="~{layout/sidebar :: sideBar}" class="sidebar"></header>
 
-<main>
-  <h2>최근 게시글</h2>
-  <!-- 최근 게시글 목록이 들어갈 부분 -->
-</main>
+  <!-- 메인 컨텐츠 -->
+  <section class="content">
+    <div class="container mt-5 text-center">
+      <h1>안녕하세요</h1>
+      <div sec:authorize="hasRole('USER')">
+        <a th:href="@{/category/form}" class="btn btn-primary mt-4">카테고리 추가/수정</a>
+      </div>
+    </div>
+  </section>
+</div>
 
-<footer>
-  <div>
-    <h5><span class="text-muted">Copyright ©lew663</span></h5>
-  </div>
-</footer>
+<footer th:replace="~{layout/footer :: footer}"></footer>
 
 </body>
 </html>
