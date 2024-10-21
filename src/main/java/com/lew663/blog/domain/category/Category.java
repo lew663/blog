@@ -30,6 +30,13 @@ public class Category extends BasicEntity {
   @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
   private List<Category> child = new ArrayList<>();
 
+  // 기본 생성자
+  public Category() {}
+
+  public Category(String title) {
+    this.title = title;
+  }
+
   public void setParent(Category parent) {
     this.parent = parent;
     if (!parent.getChild().contains(this)) {
@@ -40,10 +47,6 @@ public class Category extends BasicEntity {
   public void addChild(Category child) {
     this.child.add(child);
     child.setParent(this);
-  }
-
-  public Category(String title) {
-    this.title = title;
   }
 
   public void changeTitle(String title) {
