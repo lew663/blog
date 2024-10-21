@@ -7,7 +7,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -41,9 +41,9 @@ public class JwtTokenProvider {
   private SecretKey key;
 
   private static final String EMAIL_CLAIM = "email";
+  private static final String ROLES_CLAIM = "roles";
   private static final String ACCESS_TOKEN_COOKIE = "accessToken";
   private static final String REFRESH_TOKEN_COOKIE = "refreshToken";
-  private static final String BEARER = "Bearer ";
 
   private final MemberRepository memberRepository;
 
@@ -58,11 +58,12 @@ public class JwtTokenProvider {
   /**
    * AccessToken 생성 메소드
    */
-  public String createAccessToken(String email) {
+  public String createAccessToken(String email, String role) {
     return Jwts.builder()
         .subject("AccessToken")
         .expiration(new Date(System.currentTimeMillis() + accessTokenExpirationPeriod))
         .claim(EMAIL_CLAIM, email)
+        .claim(ROLES_CLAIM, role)
         .signWith(key)
         .compact();
   }
@@ -111,6 +112,22 @@ public class JwtTokenProvider {
       return Optional.ofNullable(claimsJws.getPayload().get(EMAIL_CLAIM, String.class));
     } catch (Exception e) {
       log.error("액세스 토큰이 유효하지 않습니다.");
+      return Optional.empty();
+    }
+  }
+
+  /**
+   * AccessToken 에서 권한 정보 추출
+   */
+  public Optional<String> extractRole(String token) {
+    try {
+      Jws<Claims> claimsJws = Jwts.parser()
+          .verifyWith(key)
+          .build()
+          .parseSignedClaims(token);
+      return Optional.ofNullable(claimsJws.getPayload().get(ROLES_CLAIM, String.class));
+    } catch (Exception e) {
+      log.error("액세스 토큰에서 권한 정보를 추출할 수 없습니다.");
       return Optional.empty();
     }
   }

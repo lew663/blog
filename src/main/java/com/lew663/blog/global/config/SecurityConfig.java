@@ -39,6 +39,7 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
         .authorizeHttpRequests(request -> request
+            .requestMatchers("/category/form").hasRole("USER")
             .requestMatchers("/", "/static/**").permitAll()
             .requestMatchers("/member/login", "/login").permitAll()
             .requestMatchers("/member/signup").permitAll()

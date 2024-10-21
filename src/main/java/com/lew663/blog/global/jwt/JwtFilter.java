@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
   private final MemberRepository memberRepository;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, FilterChain filterChain)
+  protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
       throws ServletException, IOException {
 
     log.info("JWT 필터 실행: {}", request.getRequestURI());
@@ -37,7 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
     // 쿠키에서 AccessToken 추출
     String accessToken = extractTokenFromCookies(request);
     if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
-      jwtTokenProvider.extractEmail(accessToken).flatMap(memberRepository::findByEmail).ifPresent(this::saveAuthentication);
+      jwtTokenProvider.extractEmail(accessToken).flatMap(memberRepository::findByEmail).ifPresent(member -> {
+        jwtTokenProvider.extractRole(accessToken).ifPresent(role -> {
+          saveAuthentication(member, role);
+        });
+      });
     }
 
     filterChain.doFilter(request, response);
@@ -60,8 +64,8 @@ public class JwtFilter extends OncePerRequestFilter {
   /**
    * 사용자 인증 정보를 SecurityContext 에 저장
    */
-  private void saveAuthentication(Member member) {
-    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
+  private void saveAuthentication(Member member, String role) {
+    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
 
     PrincipalDetail principalDetail = PrincipalDetail.builder()
         .email(member.getEmail())

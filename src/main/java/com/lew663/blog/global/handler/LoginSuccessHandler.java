@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                                       Authentication authentication) throws IOException, ServletException {
 
     String email = authentication.getName();
-    String accessToken = jwtTokenProvider.createAccessToken(email);
+
+    String role = authentication.getAuthorities().stream()
+        .findFirst()
+        .map(GrantedAuthority::getAuthority)
+        .orElseThrow(() -> new IllegalStateException("권한이 없습니다."));
+
+    String accessToken = jwtTokenProvider.createAccessToken(email, role);
     String refreshToken = jwtTokenProvider.createRefreshToken();
 
     jwtTokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
