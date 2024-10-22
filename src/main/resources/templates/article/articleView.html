@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head th:replace="~{layout/head :: head}">
+  <title th:text="${article.title}">게시글 조회</title>
+  <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body>
+
+<div class="layout-container">
+  <!-- 사이드바 -->
+  <header th:replace="~{layout/sidebar :: sideBar}" class="sidebar"></header>
+
+  <!-- 메인 컨텐츠 -->
+  <section class="content">
+    <div class="container mt-5">
+      <h2 th:text="${article.title}"></h2>
+      <p>작성자: <span th:text="${article.email}"></span></p>
+      <p>조회수: <span th:text="${article.viewCount}"></span></p>
+      <div>
+        <h4>내용</h4>
+        <p th:text="${article.content}"></p>
+      </div>
+      <div>
+        <h4>태그</h4>
+        <ul>
+          <li th:each="tag : ${article.tags}" th:text="${tag}"></li>
+        </ul>
+      </div>
+      <a th:href="@{/article/list}" class="btn btn-secondary">목록으로 돌아가기</a>
+
+      <!-- 수정 버튼: ADMIN 권한이 있는 경우에만 표시 -->
+      <th:block th:if="${isAdmin}">
+        <a th:href="@{/article/edit(articleId=${article.id})}" class="btn btn-warning">수정</a>
+      </th:block>
+    </div>
+  </section>
+</div>
+
+<footer th:replace="~{layout/footer :: footer}"></footer>
+
+</body>
+</html>

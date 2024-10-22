@@ -40,6 +40,7 @@ public class SecurityConfig {
 
         .authorizeHttpRequests(request -> request
             .requestMatchers("/category/**").hasRole("USER")
+            .requestMatchers("/article/view").permitAll()
             .requestMatchers("/", "/static/**").permitAll()
             .requestMatchers("/member/login", "/login").permitAll()
             .requestMatchers("/member/signup").permitAll()

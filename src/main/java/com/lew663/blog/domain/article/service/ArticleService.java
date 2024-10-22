@@ -11,11 +11,13 @@ import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -26,11 +28,15 @@ public class ArticleService {
 
   @Transactional
   public ArticleInfo createArticle(ArticleForm articleForm, String email) {
+
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    Category category = categoryRepository.findById(articleForm.getCategoryId())
-        .orElseThrow(() -> new RuntimeException("Category not found"));
+    Category category = null;
+    if (articleForm.getCategoryId() != null && articleForm.getCategoryId() > 0) {
+      category = categoryRepository.findById(articleForm.getCategoryId())
+          .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
 
     Article article = new Article(articleForm.getTitle(), articleForm.getContent(), member, category);
 
