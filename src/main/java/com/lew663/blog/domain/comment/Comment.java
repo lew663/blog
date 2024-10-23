@@ -2,6 +2,7 @@ package com.lew663.blog.domain.comment;
 
 import com.lew663.blog.domain.article.Article;
 import com.lew663.blog.domain.member.Member;
+import com.lew663.blog.global.util.BasicEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Comment {
+public class Comment extends BasicEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

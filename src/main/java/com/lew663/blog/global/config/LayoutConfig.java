@@ -1,6 +1,6 @@
 package com.lew663.blog.global.config;
 
-import com.lew663.blog.domain.category.Category;
+import com.lew663.blog.domain.category.dto.CategoryInfo;
 import com.lew663.blog.domain.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class LayoutConfig {
   private final CategoryService categoryService;
 
   public void AddLayoutTo(Model model) {
-    List<Category> categories = categoryService.findAllCategories();
+    List<CategoryInfo> categories = categoryService.findAllCategories();
     model.addAttribute("categories", categories);
   }
 }

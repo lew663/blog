@@ -88,6 +88,12 @@ public class JwtTokenProvider {
     log.info("AccessToken 및 RefreshToken 쿠키에 저장 완료");
   }
 
+  public void deleteTokens(HttpServletResponse response) {
+    addCookie(response, ACCESS_TOKEN_COOKIE, "", 0L); // 만료된 쿠키로 설정
+    addCookie(response, REFRESH_TOKEN_COOKIE, "", 0L); // 만료된 쿠키로 설정
+    log.info("AccessToken 및 RefreshToken 쿠키 삭제 완료");
+  }
+
   /**
    * 쿠키 생성 메소드
    */

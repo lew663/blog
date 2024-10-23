@@ -43,7 +43,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     jwtTokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
     updateRefreshToken(email, refreshToken);
 
-    log.info("로그인 성공 - 이메일: {}, AccessToken: {}", email, accessToken);
+    log.info("로그인 성공 - 이메일: {}, AccessToken: {}, 권한: {}", email, accessToken, role);
     response.sendRedirect("/");
   }
 

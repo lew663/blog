@@ -26,7 +26,47 @@
           <li th:each="tag : ${article.tags}" th:text="${tag}"></li>
         </ul>
       </div>
-      <a th:href="@{/article/list}" class="btn btn-secondary">목록으로 돌아가기</a>
+      <div>
+        <h4>댓글</h4>
+        <div class="comment-form">
+          <form id="commentForm" method="post">
+            <input type="hidden" name="articleId" th:value="${article.id}"/>
+            <div class="mb-3">
+              <label>
+                <textarea name="content" class="form-control" rows="3" placeholder="댓글을 입력하세요..." required></textarea>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">댓글 작성</button>
+          </form>
+        </div>
+        <div class="comment-list mt-4">
+          <div th:each="comment : ${article.comments}">
+            <div class="comment-item">
+              <p th:text="${comment.content}"></p>
+              <small th:text="${comment.createdDate}"></small>
+              <button class="btn btn-link reply-btn" th:data-id="${comment.id}">대댓글</button>
+              <div class="reply-form" style="display: none;">
+                <form class="reply-form" method="post">
+                  <input type="hidden" name="articleId" th:value="${article.id}"/>
+                  <input type="hidden" name="parentId" th:value="${comment.id}"/>
+                  <div class="mb-3">
+                    <label>
+                      <textarea name="content" class="form-control" rows="2" placeholder="대댓글을 입력하세요..." required></textarea>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary">대댓글 작성</button>
+                </form>
+              </div>
+            </div>
+            <!-- 자식 댓글 -->
+            <div th:each="childComment : ${comment.childComments}" class="child-comment">
+              <p th:text="${childComment.content}"></p>
+              <small th:text="${childComment.createdDate}"></small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a th:href="@{/}" class="btn btn-secondary">목록으로 돌아가기</a>
 
       <!-- 수정 버튼: ADMIN 권한이 있는 경우에만 표시 -->
       <th:block th:if="${isAdmin}">
@@ -37,6 +77,99 @@
 </div>
 
 <footer th:replace="~{layout/footer :: footer}"></footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // 댓글 작성 폼 AJAX 처리
+    const commentForm = document.getElementById('commentForm');
+    commentForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // 기본 폼 제출 방지
+
+      const formData = new FormData(commentForm);
+      const articleId = formData.get('articleId'); // articleId 추출
+
+      fetch(`/comment?articleId=${articleId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          content: formData.get('content')
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('댓글 작성 실패');
+        }
+        return response.json(); // JSON으로 응답받기
+      })
+      .then(data => {
+        // 댓글 목록에 새 댓글 추가
+        const commentList = document.querySelector('.comment-list');
+        const newComment = document.createElement('div');
+        newComment.className = 'comment-item';
+        newComment.innerHTML = `
+          <p>${data.content}</p>
+          <small>${data.email}</small>
+          <button class="btn btn-link reply-btn" data-id="${data.id}">대댓글</button>
+          <div class="reply-form" style="display: none;"></div>
+        `;
+        commentList.prepend(newComment); // 새 댓글을 맨 위에 추가
+        commentForm.reset(); // 폼 초기화
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // 대댓글 버튼 클릭 이벤트 처리
+    document.querySelectorAll('.reply-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const replyForm = this.nextElementSibling;
+        replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none'; // 폼 보이기/숨기기
+      });
+    });
+
+    // 대댓글 작성 폼 AJAX 처리
+    document.querySelectorAll('.reply-form').forEach(replyForm => {
+      replyForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // 기본 폼 제출 방지
+
+        const formData = new FormData(this);
+        const articleId = formData.get('articleId'); // articleId 추출
+        const parentId = formData.get('parentId'); // parentId 추출
+
+        fetch(`/comment?articleId=${articleId}&parentId=${parentId}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            content: formData.get('content')
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('대댓글 작성 실패');
+          }
+          return response.json(); // JSON으로 응답받기
+        })
+        .then(data => {
+          // 대댓글 목록에 새 대댓글 추가
+          const newChildComment = document.createElement('div');
+          newChildComment.className = 'child-comment';
+          newChildComment.innerHTML = `
+            <p>${data.content}</p>
+            <small>${data.email}</small>
+          `;
+          this.parentElement.parentElement.appendChild(newChildComment); // 새 대댓글을 추가
+          this.reset(); // 폼 초기화
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+  });
+</script>
 
 </body>
 </html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카테고리별 게시글 목록</title>
+  <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body>
+
+<div class="layout-container">
+  <!-- 사이드바 -->
+  <header th:replace="~{layout/sidebar :: sideBar}" class="sidebar"></header>
+
+  <!-- 메인 컨텐츠 -->
+  <section class="content">
+    <div class="container mt-5">
+      <h2 th:text="${categoryTitle} + '에 대한 게시글 목록'"></h2>
+
+      <div class="list-group">
+        <div th:each="article : ${articles}">
+          <a th:href="@{/article/view(articleId=${article.id})}" class="list-group-item list-group-item-action">
+            <h5 th:text="${article.title}"></h5>
+            <p th:text="${article.email}"></p>
+            <small th:text="${article.createdDate}"></small>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer th:replace="~{layout/footer :: footer}"></footer>
+
+</body>
+</html>

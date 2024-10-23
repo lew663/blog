@@ -9,10 +9,11 @@ import com.lew663.blog.domain.category.Category;
 import com.lew663.blog.domain.category.repository.CategoryRepository;
 import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.domain.member.repository.MemberRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,18 +29,14 @@ public class ArticleService {
 
   @Transactional
   public ArticleInfo createArticle(ArticleForm articleForm, String email) {
-
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
-
     Category category = null;
     if (articleForm.getCategoryId() != null && articleForm.getCategoryId() > 0) {
       category = categoryRepository.findById(articleForm.getCategoryId())
           .orElseThrow(() -> new RuntimeException("Category not found"));
     }
-
     Article article = new Article(articleForm.getTitle(), articleForm.getContent(), member, category);
-
     if (articleForm.getTags() != null) {
       for (String tagName : articleForm.getTags()) {
         Tags tag = new Tags(tagName);
@@ -50,31 +47,7 @@ public class ArticleService {
     return ArticleInfo.from(article);
   }
 
-  @Transactional
-  public void updateArticle(Long id, ArticleForm articleForm, String email) {
-    Article article = articleRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Article not found"));
-    if (!article.getMember().getEmail().equals(email)) {
-      throw new RuntimeException("수정 권한이 없습니다.");
-    }
-    Category category = categoryRepository.findById(articleForm.getCategoryId())
-        .orElseThrow(() -> new RuntimeException("Category not found"));
-
-    article.edit(articleForm.getContent(), articleForm.getTitle(), category);
-  }
-
-  @Transactional
-  public void deleteArticle(Long id, String email) {
-    Article article = articleRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Article not found"));
-
-    if (!article.getMember().getEmail().equals(email)) {
-      throw new RuntimeException("삭제 권한이 없습니다.");
-    }
-    articleRepository.delete(article);
-  }
-
-  @Transactional
+  @Transactional(readOnly = true)
   public ArticleInfo getArticleById(Long id) {
     Article article = articleRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Article not found"));
@@ -82,6 +55,7 @@ public class ArticleService {
     return ArticleInfo.from(article);
   }
 
+  @Transactional(readOnly = true)
   public List<ArticleInfo> getAllArticles() {
     return articleRepository.findAll().stream()
         .map(ArticleInfo::from)
@@ -89,10 +63,29 @@ public class ArticleService {
   }
 
   @Transactional
-  public void addTagToArticle(Long articleId, Tags tag) {
+  public void updateArticle(Long articleId, ArticleForm articleForm) {
     Article article = articleRepository.findById(articleId)
         .orElseThrow(() -> new RuntimeException("Article not found"));
-    article.addTag(tag);
+    article.edit(articleForm.getContent(), articleForm.getTitle(),
+        articleForm.getCategoryId() != null ? categoryRepository.findById(articleForm.getCategoryId())
+            .orElseThrow(() -> new RuntimeException("Category not found")) : null);
+    article.getArticleTagLists().clear();
+    if (articleForm.getTags() != null) {
+      for (String tagName : articleForm.getTags()) {
+        Tags tag = new Tags(tagName);
+        article.addTag(tag);
+      }
+    }
   }
 
+  @Transactional
+  public List<ArticleInfo> getArticleByCategoryTitle(String categoryTitle) {
+    Category category = categoryRepository.findByTitle(categoryTitle)
+        .orElseThrow(() -> new RuntimeException("해당 카테고리가 존재하지 않습니다."));
+    List<Article> articles = articleRepository.findByCategory(category);
+    articles.forEach(article -> Hibernate.initialize(article.getArticleTagLists()));
+    return articles.stream()
+        .map(ArticleInfo::from)
+        .collect(Collectors.toList());
+  }
 }

@@ -2,6 +2,7 @@ package com.lew663.blog.domain.category.controller;
 
 import com.lew663.blog.domain.category.Category;
 import com.lew663.blog.domain.category.dto.CategoryForm;
+import com.lew663.blog.domain.category.dto.CategoryInfo;
 import com.lew663.blog.domain.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,11 +21,10 @@ public class CategoryController {
   @GetMapping("/category")
   public String categoryForm(Model model) {
     model.addAttribute("categoryForm", new CategoryForm());
-    List<Category> parentCategories = categoryService.findAllParentCategories();
+    List<CategoryInfo> parentCategories = categoryService.findAllParentCategories();
     model.addAttribute("parentCategories", parentCategories);
     return "category/categoryForm";
   }
-
   @PostMapping("/category")
   public String createCategory(@Validated @ModelAttribute CategoryForm categoryForm) {
     categoryService.createCategory(categoryForm);

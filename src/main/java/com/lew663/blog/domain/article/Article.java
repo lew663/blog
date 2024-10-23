@@ -37,7 +37,7 @@ public class Article extends BasicEntity {
   @JoinColumn(name = "member_id", nullable = false)
   private Member member;
 
-  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<ArticleTagList> articleTagLists = new ArrayList<>();
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)

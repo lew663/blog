@@ -5,6 +5,7 @@ import com.lew663.blog.global.filter.CustomLoginFilter;
 import com.lew663.blog.global.handler.LoginFailureHandler;
 import com.lew663.blog.global.handler.LoginSuccessHandler;
 import com.lew663.blog.global.jwt.JwtFilter;
+import com.lew663.blog.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
   private final PrincipalUserDetailsService principalUserDetailsService;
   private final LoginSuccessHandler loginSuccessHandler;
   private final LoginFailureHandler loginFailureHandler;
+  private final JwtTokenProvider jwtTokenProvider;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,13 +41,12 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/category/**").hasRole("USER")
+            .requestMatchers("/category/**").hasRole("ADMIN")
             .requestMatchers("/article/view").permitAll()
             .requestMatchers("/", "/static/**").permitAll()
             .requestMatchers("/member/login", "/login").permitAll()
             .requestMatchers("/member/signup").permitAll()
             .requestMatchers("/oauth2/authorization/**").permitAll()
-            .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated()
         );
     http
@@ -59,6 +60,13 @@ public class SecurityConfig {
             .authenticationEntryPoint((request, response, authException) -> {
               response.sendRedirect("/login");
             })
+        )
+        .logout(logout -> logout
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+            .addLogoutHandler((request, response, authentication) -> jwtTokenProvider.deleteTokens(response))
         );
 
     http.addFilterBefore(customLoginFilter, UsernamePasswordAuthenticationFilter.class);
