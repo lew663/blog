@@ -1,6 +1,5 @@
 package com.lew663.blog.domain.category.controller;
 
-import com.lew663.blog.domain.category.Category;
 import com.lew663.blog.domain.category.dto.CategoryForm;
 import com.lew663.blog.domain.category.dto.CategoryInfo;
 import com.lew663.blog.domain.category.service.CategoryService;
@@ -23,7 +22,7 @@ public class CategoryController {
     model.addAttribute("categoryForm", new CategoryForm());
     List<CategoryInfo> parentCategories = categoryService.findAllParentCategories();
     model.addAttribute("parentCategories", parentCategories);
-    return "category/categoryForm";
+    return "admin/category/categoryForm";
   }
   @PostMapping("/category")
   public String createCategory(@Validated @ModelAttribute CategoryForm categoryForm) {

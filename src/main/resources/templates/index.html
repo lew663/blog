@@ -1,25 +1,18 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
-<head th:replace="~{layout/head :: head}">
-  <title>메인 페이지</title>
-  <link rel="stylesheet" th:href="@{/css/index.css}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/default_layout}" lang="ko">
+
+<head>
+    <title layout:fragment="title">메인페이지</title>
 </head>
 
 <body>
-
-<div class="layout-container">
-  <!-- 사이드바 -->
-  <header th:replace="~{layout/sidebar :: sideBar}" class="sidebar"></header>
-
-  <!-- 메인 컨텐츠 -->
-  <section class="content">
-    <div class="container mt-5 text-center">
-      <h1>안녕하세요</h1>
-    </div>
-  </section>
+<!-- Content -->
+<div layout:fragment="content">
+    <h1 class="mt-4">환영합니다!</h1>
+    <p>이곳은 블로그의 인덱스 페이지입니다.</p>
+    <p>여러분의 생각을 공유하고, 글을 남기세요!</p>
 </div>
-
-<footer th:replace="~{layout/footer :: footer}"></footer>
-
 </body>
 </html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/default_layout}" lang="ko">
+
+<!-- Content -->
+<div layout:fragment="content">
+  <h1>게시글 수정</h1>
+  <form th:action="@{/article/edit(articleId=${article.id})}" th:object="${article}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="mb-3">
+      <label for="title" class="form-label">제목</label>
+      <input type="text" th:field="*{title}" class="form-control" id="title" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="content" class="form-label">내용</label>
+      <textarea th:field="*{content}" class="form-control" id="content" rows="5" required></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="categoryId" class="form-label">카테고리</label>
+      <select th:field="*{categoryId}" class="form-select" id="categoryId">
+        <option value="" selected>카테고리를 선택하세요</option>
+        <option th:each="category : ${categories}"
+                th:value="${category.id}"
+                th:text="${category.title}"
+                th:selected="${category.id == article.categoryId}">
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="tags" class="form-label">태그 (쉼표로 구분)</label>
+      <input type="text" th:field="*{tags}" class="form-control" id="tags" placeholder="예: 개발, Spring, Thymeleaf">
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">수정</button>
+      <a th:href="@{/article/view(articleId=${article.id})}" class="btn btn-secondary ms-2">취소</a>
+    </div>
+  </form>
+</div>
+
+</html>

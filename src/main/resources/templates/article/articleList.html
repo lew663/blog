@@ -1,36 +1,33 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>전체 글 목록</title>
-  <link rel="stylesheet" th:href="@{/css/index.css}">
-</head>
-<body>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/default_layout}" lang="ko">
 
-<div class="layout-container">
-  <!-- 사이드바 -->
-  <header th:replace="~{layout/sidebar :: sideBar}" class="sidebar"></header>
-
-  <!-- 메인 컨텐츠 -->
-  <section class="content">
-    <div class="container mt-5">
-      <h2>전체 글 목록</h2>
-
-      <div class="list-group">
-        <div th:each="article : ${articles}">
-          <a th:href="@{/article/view(articleId=${article.id})}" class="list-group-item list-group-item-action">
-            <h5 th:text="${article.title}"></h5>
-            <p th:text="${article.email}"></p>
-            <small th:text="${article.createdDate}"></small>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- Content -->
+<div layout:fragment="content">
+  <h1>전체 게시글</h1>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">제목</th>
+      <th scope="col">작성자 이메일</th>
+      <th scope="col">작성일</th>
+      <th scope="col">작업</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="article : ${articles}">
+      <td th:text="${article.title}">제목</td>
+      <td th:text="${article.email}">작성자 이메일</td>
+      <td th:text="${#temporals.format(article.createdDate, 'yyyy-MM-dd')}">작성일</td>
+      <td>
+        <a th:href="@{/article/view(articleId=${article.id})}" class="btn btn-primary">상세 보기</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
-
-<footer th:replace="~{layout/footer :: footer}"></footer>
-
-</body>
 </html>
+
+
+

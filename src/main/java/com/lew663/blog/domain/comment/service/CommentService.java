@@ -29,9 +29,7 @@ public class CommentService {
         .orElseThrow(() -> new RuntimeException("Article not found"));
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
-
     Comment comment;
-
     if (parentId != null) {
       Comment parentComment = commentRepository.findById(parentId)
           .orElseThrow(() -> new RuntimeException("Parent comment not found"));
@@ -40,37 +38,7 @@ public class CommentService {
     } else {
       comment = new Comment(article, member, commentForm.getContent());
     }
-
     commentRepository.save(comment);
     return CommentInfo.from(comment);
-  }
-
-  @Transactional
-  public void updateComment(Long commentId, String email, CommentForm commentForm) {
-    Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("Comment not found"));
-    if (!comment.getMember().getEmail().equals(email)) {
-      throw new RuntimeException("수정 권한이 없습니다.");
-    }
-    comment.updateContent(commentForm.getContent());
-  }
-
-  @Transactional
-  public void deleteComment(Long commentId, String email) {
-    Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("Comment not found"));
-    if (!comment.getMember().getEmail().equals(email)) {
-      throw new RuntimeException("삭제 권한이 없습니다.");
-    }
-    commentRepository.delete(comment);
-  }
-
-  public List<CommentInfo> getCommentsByArticleId(Long articleId) {
-    List<Comment> comments = commentRepository.findByArticleId(articleId);
-
-    return comments.stream()
-        .filter(comment -> comment.getParent() == null)
-        .map(CommentInfo::from) // 기존의 from 메서드를 사용
-        .collect(Collectors.toList());
   }
 }

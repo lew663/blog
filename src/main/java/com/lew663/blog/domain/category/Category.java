@@ -30,7 +30,6 @@ public class Category extends BasicEntity {
   @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
   private List<Category> child = new ArrayList<>();
 
-  // 기본 생성자
   public Category() {}
 
   public Category(String title) {
@@ -47,9 +46,5 @@ public class Category extends BasicEntity {
   public void addChild(Category child) {
     this.child.add(child);
     child.setParent(this);
-  }
-
-  public void changeTitle(String title) {
-    this.title = title;
   }
 }

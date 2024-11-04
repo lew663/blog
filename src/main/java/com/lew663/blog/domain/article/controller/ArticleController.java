@@ -35,7 +35,6 @@ public class ArticleController {
     layoutConfig.AddLayoutTo(model);
     List<ArticleInfo> articleList = articleService.getAllArticles();
     model.addAttribute("articles", articleList);
-    model.addAttribute("categories", categoryService.findAllCategories());
     return "article/articleList";
   }
 
@@ -53,7 +52,6 @@ public class ArticleController {
     }
     model.addAttribute("article", articleInfo);
     model.addAttribute("isAdmin", isAdmin);
-    model.addAttribute("categories", categoryService.findAllCategories());
     model.addAttribute("commentForm", new CommentForm());
     return "article/articleView";
   }
@@ -66,7 +64,6 @@ public class ArticleController {
     List<ArticleInfo> articleList = articleService.getArticleByCategoryTitle(categoryTitle);
     model.addAttribute("categoryTitle", categoryTitle);
     model.addAttribute("articles", articleList);
-    model.addAttribute("categories", categoryService.findAllCategories());
     return "article/articleListByCategory";
   }
 
@@ -77,8 +74,7 @@ public class ArticleController {
   public String getArticleWriteForm(Model model) {
     layoutConfig.AddLayoutTo(model);
     model.addAttribute("articleForm", new ArticleForm());
-    model.addAttribute("categories", categoryService.findAllCategories());
-    return "article/articleForm";
+    return "admin/article/articleForm";
   }
   @PostMapping("/article/write")
   public String createArticle(@ModelAttribute ArticleForm articleForm,
@@ -97,8 +93,7 @@ public class ArticleController {
     layoutConfig.AddLayoutTo(model);
     ArticleInfo articleInfo = articleService.getArticleById(articleId);
     model.addAttribute("article", articleInfo);
-    model.addAttribute("categories", categoryService.findAllCategories());
-    return "article/articleEdit";
+    return "admin/article/articleEdit";
   }
   @PostMapping("/article/edit")
   public String updateArticle(@RequestParam Long articleId,

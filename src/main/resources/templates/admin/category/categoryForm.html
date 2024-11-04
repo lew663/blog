@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/default_layout}" lang="ko">
+
+<!-- Content -->
+<div layout:fragment="content">
+  <h1>카테고리 추가/수정</h1>
+  <form th:action="@{/category}" th:object="${categoryForm}" method="post" class="mb-4">
+    <div class="mb-3">
+      <label for="title" class="form-label">카테고리 이름</label>
+      <input type="text" th:field="*{title}" id="title" placeholder="카테고리 이름을 입력해주세요" class="form-control" required>
+      <div th:if="${#fields.hasErrors('title')}" class="text-danger mt-1">
+        <small th:errors="*{title}">카테고리 이름이 올바르지 않습니다.</small>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="parentId" class="form-label">상위 카테고리 (선택)</label>
+      <select th:field="*{parentId}" class="form-select" id="parentId">
+        <option value="" selected>상위 카테고리 없음</option>
+        <option th:each="category : ${parentCategories}" th:value="${category.id}" th:text="${category.title}">
+          카테고리 선택
+        </option>
+      </select>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">저장</button>
+      <a th:href="@{/}" class="btn btn-secondary">취소</a>
+    </div>
+  </form>
+</div>
+</html>
+

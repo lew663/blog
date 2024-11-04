@@ -6,6 +6,7 @@ import com.lew663.blog.global.handler.LoginFailureHandler;
 import com.lew663.blog.global.handler.LoginSuccessHandler;
 import com.lew663.blog.global.jwt.JwtFilter;
 import com.lew663.blog.global.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,12 +42,10 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/category/**").hasRole("ADMIN")
-            .requestMatchers("/article/view").permitAll()
-            .requestMatchers("/", "/static/**").permitAll()
-            .requestMatchers("/member/login", "/login").permitAll()
-            .requestMatchers("/member/signup").permitAll()
-            .requestMatchers("/oauth2/authorization/**").permitAll()
+            .requestMatchers("/category/**", "/article/write", "/article/edit").hasRole("ADMIN")
+            .requestMatchers("/article/view", "/article/list/**").permitAll()
+            .requestMatchers("/", "/static/**", "/member/login", "/login", "/member/signup", "/oauth2/authorization/**").permitAll()
+            .requestMatchers("/assets/**", "/css/**", "/js/**", "/static/**", "/favicon.ico").permitAll()
             .anyRequest().authenticated()
         );
     http
@@ -58,7 +57,10 @@ public class SecurityConfig {
         )
         .exceptionHandling(exception -> exception
             .authenticationEntryPoint((request, response, authException) -> {
-              response.sendRedirect("/login");
+              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            })
+            .accessDeniedHandler((request, response, accessDeniedException) -> {
+              response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
             })
         )
         .logout(logout -> logout

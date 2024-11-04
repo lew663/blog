@@ -47,8 +47,4 @@ public class Comment extends BasicEntity {
     this(article, member, content);
     this.parent = parent;
   }
-
-  public void updateContent(String content) {
-    this.content = content;
-  }
 }

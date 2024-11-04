@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- sidebarFragment 선언 -->
+<div th:fragment="sidebarFragment">
+  <div class="border-end bg-white" id="sidebar-wrapper">
+    <div class="sidebar-heading border-bottom bg-light">
+      <a th:href="@{/}" class="link-dark text-decoration-none">
+        lew LOG
+      </a>
+    </div>
+    <div class="list-group list-group-flush">
+      <!-- 관리자 전용 링크 (게시글 작성, 카테고리 수정) -->
+      <a th:href="@{/article/write}" class="list-group-item list-group-item-action list-group-item-light p-3"
+         sec:authorize="hasRole('ADMIN')">
+        ARTICLE
+      </a>
+      <a th:href="@{/category}" class="list-group-item list-group-item-action list-group-item-light p-3"
+         sec:authorize="hasRole('ADMIN')">
+        CATEGORY
+      </a>
+
+      <!-- 전체 글 보기 -->
+      <a th:href="@{/article/list}" class="list-group-item list-group-item-action list-group-item-light p-3">
+        전체 글 보기
+      </a>
+
+      <!-- 카테고리 목록 -->
+      <div th:each="category : ${categories}" th:if="${category.parentId == null}">
+        <a th:href="@{/article/list/category(categoryTitle=${category.title})}"
+           class="list-group-item list-group-item-action list-group-item-light p-3">
+          <span class="category btn fs-5" th:text="${category.title}"></span>
+        </a>
+
+        <!-- 서브 카테고리 목록 -->
+        <ul class="ms-3 list-unstyled fw-normal pb-1 small">
+          <li th:each="subCategory : ${category.childCategories}">
+            <a th:href="@{/article/list/category(categoryTitle=${subCategory.title})}" class="link-dark rounded"
+               th:text="${subCategory.title}"></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</html>
