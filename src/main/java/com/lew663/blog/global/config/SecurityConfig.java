@@ -42,8 +42,8 @@ public class SecurityConfig {
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/category/**", "/article/write", "/article/edit").hasRole("ADMIN")
-            .requestMatchers("/article/view", "/article/list/**").permitAll()
+            .requestMatchers("/category/**", "/article/write", "/article/edit", "/article/delete").hasRole("ADMIN")
+            .requestMatchers("/article/view/**", "/article/list/**").permitAll()
             .requestMatchers("/", "/static/**", "/member/login", "/login", "/member/signup", "/oauth2/authorization/**").permitAll()
             .requestMatchers("/assets/**", "/css/**", "/js/**", "/static/**", "/favicon.ico").permitAll()
             .anyRequest().authenticated()

@@ -3,19 +3,18 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layout/default_layout}" lang="ko">
 
-<!-- Content -->
 <div layout:fragment="content">
   <h1>회원가입</h1>
   <form th:action="@{/member/signup}" method="post">
-    <div class="mb-4">
+    <div class="mb-3">
       <label for="email" class="form-label">이메일:</label>
       <input type="email" id="email" name="email" class="form-control" required>
     </div>
-    <div class="mb-4">
+    <div class="mb-3">
       <label for="password" class="form-label">비밀번호:</label>
       <input type="password" id="password" name="password" class="form-control" required>
     </div>
-    <div class="mb-4">
+    <div class="mb-3">
       <label for="passwordCheck" class="form-label">비밀번호 확인:</label>
       <input type="password" id="passwordCheck" name="passwordCheck" class="form-control" required>
     </div>
@@ -25,4 +24,5 @@
     <p>이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a></p>
   </div>
 </div>
+
 </html>

@@ -3,31 +3,41 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layout/default_layout}" lang="ko">
 
-<!-- Content -->
 <div layout:fragment="content">
   <h1>전체 게시글</h1>
-  <table class="table">
+  <table class="table table-striped">
     <thead>
-    <tr>
-      <th scope="col">제목</th>
-      <th scope="col">작성자 이메일</th>
-      <th scope="col">작성일</th>
-      <th scope="col">작업</th>
-    </tr>
+      <tr>
+        <th scope="col">제목</th>
+        <th scope="col">작성일</th>
+        <th scope="col">작업</th>
+      </tr>
     </thead>
     <tbody>
-    <tr th:each="article : ${articles}">
-      <td th:text="${article.title}">제목</td>
-      <td th:text="${article.email}">작성자 이메일</td>
-      <td th:text="${#temporals.format(article.createdDate, 'yyyy-MM-dd')}">작성일</td>
-      <td>
-        <a th:href="@{/article/view(articleId=${article.id})}" class="btn btn-primary">상세 보기</a>
-      </td>
-    </tr>
+      <tr th:each="article : ${articles}">
+        <td th:text="${article.title}">제목</td>
+        <td th:text="${#temporals.format(article.createdDate, 'yyyy-MM-dd')}">작성일</td>
+        <td>
+          <a th:href="@{/article/view(articleId=${article.id})}" class="btn btn-primary">상세 보기</a>
+        </td>
+      </tr>
     </tbody>
   </table>
-</div>
-</html>
 
+  <!-- Pagination -->
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled' : ''">
+        <a class="page-link" th:href="@{/article/list/category(categoryTitle=${categoryTitle}, page=${currentPage - 1})}" th:if="${hasPrevious}">이전</a>
+      </li>
+      <li class="page-item disabled"><span class="page-link">페이지 [[${currentPage + 1}]] / [[${totalPages}]]</span></li>
+      <li class="page-item" th:classappend="${!hasNext} ? 'disabled' : ''">
+        <a class="page-link" th:href="@{/article/list/category(categoryTitle=${categoryTitle}, page=${currentPage + 1})}" th:if="${hasNext}">다음</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+</html>
 
 

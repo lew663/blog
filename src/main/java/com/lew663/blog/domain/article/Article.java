@@ -30,14 +30,14 @@ public class Article extends BasicEntity {
   @Column(columnDefinition = "TEXT")
   private String content;
 
-  @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
-  private ArticleViewCount viewCount;
+  @Column(nullable = false)
+  private Long viewCount = 0L;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", nullable = false)
   private Member member;
 
-  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ArticleTagList> articleTagLists = new ArrayList<>();
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -56,17 +56,14 @@ public class Article extends BasicEntity {
     this.category = category;
   }
 
+  public void incrementViewCount() {
+    this.viewCount++;
+  }
+
   public void edit(String content, String title, Category category) {
     this.content = content;
     this.title = title;
     this.category = category;
-  }
-
-  public void addHit(){
-    if (viewCount == null) {
-      viewCount = new ArticleViewCount(this);
-    }
-    viewCount.incrementViewCount();
   }
 
   public void addTag(Tags tag) {

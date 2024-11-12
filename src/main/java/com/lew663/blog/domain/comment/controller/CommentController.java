@@ -6,25 +6,23 @@ import com.lew663.blog.domain.comment.service.CommentService;
 import com.lew663.blog.domain.member.dto.PrincipalDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/comment")
+@Controller
 @RequiredArgsConstructor
 public class CommentController {
 
   private final CommentService commentService;
 
   // 댓글 생성
-  @PostMapping
-  public ResponseEntity<CommentInfo> createComment(@RequestParam Long articleId,
-                                                   @RequestParam(required = false) Long parentId,
-                                                   @Valid @RequestBody CommentForm commentForm,
-                                                   @AuthenticationPrincipal PrincipalDetail principalDetail) {
+  @PostMapping("/article/view")
+  public String createComment(@RequestParam("articleId") Long articleId,
+                              @RequestParam(name = "parentId", required = false) Long parentId,
+                              @Valid @ModelAttribute CommentForm commentForm,
+                              @AuthenticationPrincipal PrincipalDetail principalDetail) {
     CommentInfo commentInfo = commentService.createComment(articleId, principalDetail.getName(), commentForm, parentId);
-    return new ResponseEntity<>(commentInfo, HttpStatus.CREATED);
+    return "redirect:/article/view?articleId=" + articleId;
   }
 }

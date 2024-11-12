@@ -25,20 +25,33 @@ public class CommentService {
 
   @Transactional
   public CommentInfo createComment(Long articleId, String email, CommentForm commentForm, Long parentId) {
+
     Article article = articleRepository.findById(articleId)
-        .orElseThrow(() -> new RuntimeException("Article not found"));
+        .orElseThrow(() -> new IllegalArgumentException("Article not found"));
     Member member = memberRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
-    Comment comment;
-    if (parentId != null) {
-      Comment parentComment = commentRepository.findById(parentId)
-          .orElseThrow(() -> new RuntimeException("Parent comment not found"));
-      comment = new Comment(article, member, commentForm.getContent(), parentComment);
-      parentComment.getChild().add(comment);
-    } else {
-      comment = new Comment(article, member, commentForm.getContent());
-    }
+        .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+    Comment comment = (parentId != null)
+        ? createChildComment(article, member, commentForm, parentId)
+        : new Comment(article, member, commentForm.getContent());
+
     commentRepository.save(comment);
     return CommentInfo.from(comment);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CommentInfo> getCommentsByArticleId(Long articleId) {
+    return commentRepository.findByArticleId(articleId)
+        .stream()
+        .map(CommentInfo::from)
+        .collect(Collectors.toList());
+  }
+
+  private Comment createChildComment(Article article, Member member, CommentForm commentForm, Long parentId) {
+    Comment parentComment = commentRepository.findById(parentId)
+        .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
+    Comment childComment = new Comment(article, member, commentForm.getContent(), parentComment);
+    parentComment.getChild().add(childComment);
+    return childComment;
   }
 }

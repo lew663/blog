@@ -4,6 +4,7 @@ import com.lew663.blog.domain.article.Article;
 import com.lew663.blog.domain.article.Tags;
 import com.lew663.blog.domain.article.dto.ArticleForm;
 import com.lew663.blog.domain.article.dto.ArticleInfo;
+import com.lew663.blog.domain.article.dto.ArticleSummaryInfo;
 import com.lew663.blog.domain.article.repository.ArticleRepository;
 import com.lew663.blog.domain.category.Category;
 import com.lew663.blog.domain.category.repository.CategoryRepository;
@@ -11,7 +12,8 @@ import com.lew663.blog.domain.member.Member;
 import com.lew663.blog.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,21 +49,6 @@ public class ArticleService {
     return ArticleInfo.from(article);
   }
 
-  @Transactional(readOnly = true)
-  public ArticleInfo getArticleById(Long id) {
-    Article article = articleRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Article not found"));
-    article.addHit();
-    return ArticleInfo.from(article);
-  }
-
-  @Transactional(readOnly = true)
-  public List<ArticleInfo> getAllArticles() {
-    return articleRepository.findAll().stream()
-        .map(ArticleInfo::from)
-        .collect(Collectors.toList());
-  }
-
   @Transactional
   public void updateArticle(Long articleId, ArticleForm articleForm) {
     Article article = articleRepository.findById(articleId)
@@ -79,13 +66,29 @@ public class ArticleService {
   }
 
   @Transactional
-  public List<ArticleInfo> getArticleByCategoryTitle(String categoryTitle) {
+  public void deleteArticle(Long articleId) {
+    articleRepository.deleteById(articleId);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ArticleSummaryInfo> getAllArticles(Pageable pageable) {
+    return articleRepository.findAllArticles(pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ArticleSummaryInfo> getArticleByCategoryTitle(String categoryTitle, Pageable pageable) {
     Category category = categoryRepository.findByTitle(categoryTitle)
         .orElseThrow(() -> new RuntimeException("해당 카테고리가 존재하지 않습니다."));
-    List<Article> articles = articleRepository.findByCategory(category);
-    articles.forEach(article -> Hibernate.initialize(article.getArticleTagLists()));
-    return articles.stream()
-        .map(ArticleInfo::from)
-        .collect(Collectors.toList());
+    return articleRepository.findByCategory(category, pageable);
   }
+
+  @Transactional(readOnly = true)
+  public ArticleInfo getArticleById(Long id) {
+    Article article = articleRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Article not found"));
+    article.incrementViewCount();
+    return ArticleInfo.from(article);
+  }
+
+
 }
