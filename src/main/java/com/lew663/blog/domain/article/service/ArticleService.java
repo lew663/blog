@@ -17,8 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -90,5 +88,7 @@ public class ArticleService {
     return ArticleInfo.from(article);
   }
 
-
+  public Page<ArticleSummaryInfo> searchArticles(String keyword, Pageable pageable) {
+    return articleRepository.searchByKeyword(keyword, pageable);
+  }
 }

@@ -7,8 +7,8 @@
             <h2>name</h2>
             <p class="text-muted">description.</p>
         </div>
-        <form class="d-flex mt-3" style="max-width: 300px;">
-            <input class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="d-flex mt-3" method="get" action="/article/list/search" style="max-width: 300px;">
+            <input class="form-control form-control-sm me-2" type="search" name="keyword" placeholder="Search" aria-label="Search" value="${keyword}">
             <button class="btn btn-outline-success btn-sm" type="submit">Search</button>
         </form>
         <hr>

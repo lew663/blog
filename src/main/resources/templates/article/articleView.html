@@ -90,6 +90,10 @@
         수정
       </a>
     </div>
+    <form th:action="@{/article/delete}" method="post" style="display:inline;">
+      <input type="hidden" name="articleId" th:value="${article.id}" />
+      <button type="submit" class="btn btn-danger" sec:authorize="hasRole('ADMIN')">삭제</button>
+    </form>
   </div>
 </div>
 </html>

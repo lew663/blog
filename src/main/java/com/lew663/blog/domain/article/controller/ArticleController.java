@@ -79,11 +79,21 @@ public class ArticleController {
 
   // 검색어 별로 게시글 조회
   @GetMapping("/article/list/search")
-  public String readArticleListByKeyword(@RequestParam Integer page,
-                                         @RequestParam String keyword,
+  public String readArticleListByKeyword(@RequestParam String keyword,
+                                         @PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                          Model model) {
+    if (keyword == null || keyword.trim().isEmpty()) {
+      keyword = "";
+    }
     layoutConfig.AddLayoutTo(model);
-    return "";
+    Page<ArticleSummaryInfo> articlePage = articleService.searchArticles(keyword, pageable);
+    model.addAttribute("articles", articlePage.getContent());
+    model.addAttribute("totalPages", articlePage.getTotalPages());
+    model.addAttribute("currentPage", articlePage.getNumber());
+    model.addAttribute("hasNext", articlePage.hasNext());
+    model.addAttribute("hasPrevious", articlePage.hasPrevious());
+    model.addAttribute("keyword", keyword);
+    return "article/articleListByKeyword";
   }
 
   /**
